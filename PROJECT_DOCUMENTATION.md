@@ -1,11 +1,11 @@
-# NexusCommerce MVP
+# NexusCommerce MVP (Official Merch Studio)
 ## Full-Stack E-Commerce Platform Architecture & Technical Documentation
 
 ---
 
-| **Document Version** | 1.1.0 |
+| **Document Version** | 1.2.0 |
 | :--- | :--- |
-| **Project Name** | **NexusCommerce MVP** |
+| **Project Name** | **NexusCommerce MVP (Official Merch Studio)** |
 | **Frontend Stack** | Next.js 16 (App Router), React 19, TypeScript 5+, Tailwind CSS v4, Lucide Icons |
 | **Backend Stack** | Laravel 11/12 REST API, PHP 8.3+, Laravel Sanctum |
 | **Database Engine** | PostgreSQL 16+ (Relational + JSONB support) |
@@ -15,12 +15,13 @@
 
 ## 1. Executive Summary & Project Description
 
-**NexusCommerce MVP** is a state-of-the-art, high-performance e-commerce platform engineered to deliver a seamless, dynamic shopping experience for retail customers while providing robust, real-time store management capabilities for administrators. 
+**NexusCommerce MVP (Official Merch Studio)** is a state-of-the-art, high-performance e-commerce platform engineered to deliver a clean, editorial retail shopping experience for a premium creator merchandise brand while providing robust, real-time store management capabilities for administrators. Specializing in 400 GSM heavyweight hoodies, boxy combed cotton tees, utility cargo joggers, and aerospace titanium accessories, the platform enforces an uncluttered **Nordic Minimalist Editorial UI/UX** (Option C: Indigo & Coral).
 
 Built on a decoupled architecture comprising a modern **Next.js 16 (App Router)** frontend and an enterprise-grade **Laravel RESTful backend**, NexusCommerce enforces strict type safety, atomic inventory management, and role-based security. The platform utilizes **PostgreSQL** as its core data store, leveraging advanced relational constraints and high-performance JSONB indexing for flexible order address modeling and payment gateway metadata.
 
 ### Key Value Propositions
-- **High-Velocity Shopping & SEO Excellence**: Next.js App Router providing Server-Side Rendering (SSR) for dynamic product catalogs, Static Site Generation (SSG) for fast category pages, and optimistic client-side interactivity.
+- **Nordic Minimalist Editorial Design**: Zero marketplace clutter, zero emojis, zero gimmicky 3D tilting cards, and zero AI-slop glassmorphism. Emphasizes immaculate whitespace (`#FDF8F6` and `#FFFFFF`), high-contrast uppercase typography (`Outfit` and `Inter`), 1px slate borders, and mono-spaced pricing.
+- **High-Velocity Shopping & SEO Excellence**: Next.js App Router providing Server-Side Rendering (SSR) for dynamic merchandise catalogs, Static Site Generation (SSG) for fast category pages, and optimistic client-side interactivity.
 - **Zero Overselling Guarantee**: Atomic database row-locking (`SELECT ... FOR UPDATE`) during checkout ensures inventory consistency under concurrent order volumes.
 - **Modular & Extensible API**: A clean REST API specification that readily scales to support mobile apps (React Native/iOS/Android) and third-party integrations.
 
@@ -31,7 +32,7 @@ Built on a decoupled architecture comprising a modern **Next.js 16 (App Router)*
 ### 2.1 Frontend Layer (Client Application)
 * **Framework**: **Next.js 16** (App Router architecture utilizing React Server Components for optimal SEO and initial load speed, combined with Client Components for rich interactivity)
 * **Language**: **TypeScript 5+** (End-to-end compile-time type safety across interfaces, API fetchers, and server actions)
-* **Styling & UI**: **Tailwind CSS v4** (Utility-first styling configured with Option C: Nordic Minimalist Indigo & Coral design tokens, responsive dark mode, and glassmorphic depth)
+* **Styling & UI**: **Tailwind CSS v4** (Utility-first styling configured with Option C: Nordic Minimalist Editorial Indigo & Coral design tokens, clean 1px borders, and responsive layouts)
 * **State Management & Data Fetching**: **Zustand / TanStack Query (React Query v5)** for client-side state synchronization, cart persistence, and optimistic UI updates, paired with Next.js native `fetch` caching and revalidation on server components
 * **Routing**: Next.js App Router (`app/` directory) with nested layouts, loading skeletons, error boundaries, and middleware-based route protection
 * **Icons & Assets**: **Lucide React** (Vector-based, accessible iconography)
@@ -53,10 +54,11 @@ Built on a decoupled architecture comprising a modern **Next.js 16 (App Router)*
 
 ## 3. Comprehensive Feature Breakdown
 
-### 3.1 Product Catalog
-* **Dynamic Grid & List Views**: Responsive product cards featuring hover zoom, badges (*Featured*, *Low Stock*, *Sale*), and quick add-to-cart actions.
+### 3.1 Product Catalog & Taxonomies
+* **Editorial Catalog Views**: Clean, high-contrast merchandise cards featuring subtle image hover zoom, crisp uppercase badges (*COLLECTION 04*, *LOW STOCK*, *SALE*), and quick add-to-bag actions.
+* **Merch Taxonomies**: Organized into 4 core lifestyle collections: *Hoodies & Outerwear*, *Tees & Tops*, *Bottoms & Joggers*, and *Bracelets & Gear*.
 * **Advanced Search & Filtering**: Filter products instantly by Category hierarchy, Price Range, Stock Availability, and Search keyword matching against title and summary.
-* **Product Detail Page (PDP)**: Server-rendered for maximum SEO discoverability, featuring high-resolution image gallery carousels, comprehensive technical descriptions, real-time stock status indicators, SKU information, and quantity selectors.
+* **Product Detail Page (PDP)**: Server-rendered for maximum SEO discoverability, featuring high-resolution image gallery carousels, structured technical specifications (GSM density, metal grade, fit type), real-time stock status indicators, SKU information, and quantity selectors.
 
 ### 3.2 Shopping Cart
 * **Dual-State Cart System**: Guest session UUID carts stored in local/cookie state that seamlessly merge into authenticated customer carts upon login.
@@ -157,7 +159,7 @@ sequenceDiagram
         Inv->>DB: Decrement quantity, increment reserved_quantity
         API->>DB: Create Order & Order Items (Status: Pending)
         API->>DB: COMMIT TRANSACTION
-        API->>Pay: Create Payment Intent ($249.99)
+        API->>Pay: Create Payment Intent ($209.00)
         Pay-->>API: Client Secret / Transaction ID
         API-->>Customer: 201 Created (Order ID, Payment Token)
     end
@@ -405,31 +407,98 @@ All endpoints are prefixed with `/api/v1` and communicate via `application/json`
 
 ## 8. Directory & Project Structure Guide
 
+### 8.1 Definitive Frontend Folder Structure (`frontend/e-commerce-frontend/`)
+To systematically continue with our e-commerce system flow (Cart -> Checkout -> User Portal -> Admin Dashboard -> Backend Integration), the Next.js 16 App Router application adheres strictly to the following modular architecture:
+
 ```text
-e-commerce-sample/
-├── PROJECT_DOCUMENTATION.md          # Complete Technical Specification & Architecture Guide (This File)
-├── PROJECT.md                        # Quick Architectural Reference & Onboarding Guide
-├── DESIGN_SYSTEM.md                  # Option C (Nordic Minimalist Indigo & Coral) Design Standards
-├── database_schema.sql               # Production PostgreSQL DDL Schema & Seed Data
-├── backend/
-│   └── e-commerce-backend/           # Laravel 11/12 REST API Codebase
-│       ├── app/
-│       │   ├── Http/Controllers/Api/V1/ # Auth, Product, Cart, Checkout, Order Controllers
-│       │   ├── Http/Requests/           # Form Validation Request Classes
-│       │   ├── Models/                  # Eloquent Models (User, Product, Order, InventoryItem)
-│       │   └── Services/                # Domain Business Logic (CheckoutService, InventoryService)
-│       ├── database/migrations/         # Laravel Schema Migrations matching database_schema.sql
-│       └── routes/api.php               # API v1 Route Definitions
-└── frontend/
-    └── e-commerce-frontend/          # Next.js 16 (App Router) + Tailwind CSS v4 Codebase
-        ├── app/                      # Next.js App Router Pages, Layouts, and API Routes
-        │   ├── (auth)/               # Auth routes (login, register)
-        │   ├── (shop)/               # Shop routes (catalog, products/[slug], cart, checkout)
-        │   ├── admin/                # Protected Admin Portal routes
-        │   ├── globals.css           # Global Tailwind v4 styles & Option C design tokens
-        │   └── layout.tsx            # Root Server Layout with font providers
-        ├── components/               # Reusable UI Components (Navbar, ProductCard, CartDrawer)
-        ├── lib/                      # API fetch clients, query providers, utility helpers
-        ├── store/                    # Zustand Global State Stores (useCartStore, useAuthStore)
-        └── types/                    # TypeScript Interfaces matching Backend API Payloads
+frontend/e-commerce-frontend/
+├── app/                                      # Next.js 16 App Router Structure
+│   ├── (auth)/                               # Route Group: Authentication Workflows
+│   │   ├── login/page.tsx                    # Customer login screen (Sanctum JWT/Cookie)
+│   │   ├── register/page.tsx                 # New customer onboarding & account creation
+│   │   └── forgot-password/page.tsx          # Password reset trigger
+│   ├── (shop)/                               # Route Group: Storefront & E-Commerce Flow
+│   │   ├── catalog/                          # Full merchandise catalog with filter sidebar
+│   │   │   └── page.tsx                      # Paginated catalog view
+│   │   ├── products/                         # Product Detail Pages (PDP)
+│   │   │   └── [slug]/page.tsx               # Server-rendered PDP with image gallery & specs
+│   │   ├── cart/                             # Dedicated shopping cart page
+│   │   │   └── page.tsx                      # Full cart view, coupon code, and tax estimate
+│   │   ├── checkout/                         # Checkout & Payment Pipeline
+│   │   │   ├── page.tsx                      # Multi-step accordion checkout (Address -> Shipping -> Pay)
+│   │   │   └── success/page.tsx              # Order confirmation receipt & tracking summary
+│   │   ├── orders/                           # Customer Order History & Tracking
+│   │   │   ├── page.tsx                      # List of past orders with status badges
+│   │   │   └── [orderNumber]/page.tsx        # Detailed order breakdown & shipment tracking
+│   │   └── profile/                          # Customer Account Management
+│   │       ├── page.tsx                      # Personal info & communication preferences
+│   │       └── addresses/page.tsx            # CRUD address book (Shipping/Billing)
+│   ├── admin/                                # Route Group: Protected Admin Management Portal
+│   │   ├── layout.tsx                        # Admin sidebar navigation & RBAC guard
+│   │   ├── page.tsx                          # Executive KPI dashboard (Revenue, Orders, Low Stock)
+│   │   ├── products/                         # Merch catalog CRUD management
+│   │   │   ├── page.tsx                      # Product list table with stock indicators
+│   │   │   ├── new/page.tsx                  # Create new merchandise drop form
+│   │   │   └── [id]/edit/page.tsx            # Edit existing product metadata & pricing
+│   │   ├── categories/page.tsx               # Taxonomy hierarchy management
+│   │   └── orders/                           # Order Management System (OMS)
+│   │       ├── page.tsx                      # System-wide order fulfillment table
+│   │       └── [id]/page.tsx                 # Admin order inspector & status updater
+│   ├── globals.css                           # Tailwind CSS v4 imports & Option C editorial tokens
+│   ├── layout.tsx                            # Root Server Layout (Fonts, Metadata, QueryProviders)
+│   ├── page.tsx                              # Editorial Merch Landing Page (Hero, Catalog, Box Set)
+│   └── not-found.tsx                         # 404 Not Found fallback
+├── components/                               # Reusable Modular UI Components
+│   ├── admin/                                # Admin-specific UI widgets (KPI Cards, Tables, Forms)
+│   ├── cart/                                 # CartDrawer modal & CartItem row components
+│   ├── catalog/                              # ProductCard, FilterSidebar, SortDropdown, SearchModal
+│   ├── checkout/                             # AddressSelector, PaymentMethods, OrderSummaryBox
+│   ├── layout/                               # Navbar, Footer, AnnouncementBar, MobileMenu
+│   └── ui/                                   # Primitive UI building blocks (Button, Input, Badge, Modal)
+├── lib/                                      # Core Infrastructure, API Clients & Utilities
+│   ├── api/                                  # Axios / Fetch HTTP API Clients communicating with Laravel
+│   │   ├── client.ts                         # Base API client with Sanctum interceptors & error handling
+│   │   ├── auth.ts                           # Login, register, logout, and profile API calls
+│   │   ├── products.ts                       # Catalog, category, and PDP data fetchers
+│   │   ├── cart.ts                           # Server/client cart synchronization endpoints
+│   │   ├── checkout.ts                       # Order submission & payment intent triggers
+│   │   └── admin.ts                          # Admin KPI, product CRUD, and order status updates
+│   ├── utils/                                # Helper functions (currency formatter, date formatting, cn)
+│   └── validations/                          # Zod schema definitions for frontend form validation
+├── store/                                    # Zustand Client-Side State Stores
+│   ├── useAuthStore.ts                       # Authenticated user session, Sanctum token, and RBAC role
+│   ├── useCartStore.ts                       # Cart items, quantity toggles, subtotal calculation, and drawer toggle
+│   └── useUIStore.ts                         # Global UI state (mobile menu, search modal, toast alerts)
+└── types/                                    # TypeScript Interfaces Matching Laravel API Payloads
+    ├── auth.ts                               # User, Address, LoginResponse interfaces
+    ├── product.ts                            # Product, Category, ProductImage, Spec interfaces
+    ├── cart.ts                               # Cart, CartItem, CartSummary interfaces
+    ├── order.ts                              # Order, OrderItem, Payment, ShippingAddress interfaces
+    └── admin.ts                              # KPIMetrics, InventoryLog, StockAdjustment interfaces
+```
+
+### 8.2 Backend Directory Structure (`backend/e-commerce-backend/`)
+```text
+backend/e-commerce-backend/
+├── app/
+│   ├── Http/Controllers/Api/V1/              # API Controllers by Domain
+│   │   ├── AuthController.php                # Register, login, logout, profile
+│   │   ├── ProductController.php             # Product catalog & PDP
+│   │   ├── CategoryController.php            # Category hierarchy
+│   │   ├── CartController.php                # Shopping cart synchronization
+│   │   ├── CheckoutController.php            # Order placement & stock locking
+│   │   ├── OrderController.php               # Customer order history
+│   │   └── Admin/                            # Protected Admin Portal Controllers
+│   │       ├── DashboardController.php       # KPI analytics
+│   │       └── ProductManagementController.php # Catalog CRUD
+│   ├── Http/Requests/                        # Form Validation Request Classes
+│   ├── Models/                               # Eloquent ORM Models (Strict Mode Enabled)
+│   └── Services/                             # Domain Business Logic
+│       ├── CheckoutService.php               # Atomic checkout transaction & payment intent
+│       └── InventoryService.php              # Pessimistic locking & stock auditing
+├── database/
+│   ├── migrations/                           # Schema migrations matching database_schema.sql
+│   └── seeders/                              # Sample merch catalog & admin account seeders
+└── routes/
+    └── api.php                               # Route definitions prefixed with /api/v1
 ```

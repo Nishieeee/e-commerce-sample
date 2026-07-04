@@ -1,17 +1,18 @@
 # DESIGN_SYSTEM.md - NexusCommerce MVP Frontend UI/UX Standards
 
-This document establishes the official visual identity, design tokens, color palette, typography hierarchy, and UI component standards for **NexusCommerce MVP**, based on **Option C: Nordic Minimalist Indigo & Coral**.
+This document establishes the official visual identity, design tokens, color palette, typography hierarchy, and UI component standards for **NexusCommerce MVP (Official Merch Studio)**, based on **Option C: Nordic Minimalist Editorial (Indigo & Coral)**.
 
 ---
 
 ## 1. Brand Identity & Visual Vibe
 
-* **Theme Name**: **Nordic Minimalist Indigo & Coral**
-* **Vibe & Aesthetic**: Fresh, editorial, vibrant, high-contrast, and inviting. Engineered specifically for retail, lifestyle, apparel, and premium consumer goods.
+* **Theme Name**: **Nordic Minimalist Editorial (Indigo & Coral)**
+* **Brand Vibe & Aesthetic**: Clean, modern, editorial, high-contrast, and sophisticated. Engineered specifically for a premium creator merchandise and lifestyle brand (heavyweight hoodies, boxy tees, utility cargo joggers, and aerospace titanium accessories).
 * **Core Philosophy**:
-  * **Content-First Retail**: Clean white/cream backgrounds (`#FDF8F6`) allow colorful product photography and promotional banners to stand out without visual clutter.
-  * **High-Conversion Urgency**: Bold coral/rose accents (`#F43F5E`) immediately attract the eye to primary conversion triggers (Add to Cart, Checkout, 20% OFF badges).
-  * **Tactile Micro-Interactions**: Hover zoom, smooth drawer animations, and spring-based button feedback (150–300ms duration).
+  * **Zero Marketplace Clutter & Zero AI Slop**: Absolutely **no emojis** (`🔥`, `⚡`, `✨`, etc.), no gimmicky 3D tilting cards, no rainbow/neon text gradients, and no heavy glassmorphic blurs. Every element serves a functional UI/UX purpose.
+  * **Editorial Photography Focus**: Crisp white/cream backgrounds (`#FDF8F6` and `#FFFFFF`) allow high-end streetwear and lifestyle photography to speak for itself without dark gradient overlays obscuring the details.
+  * **High-Contrast Typography & Structure**: Clean uppercase tracking (`tracking-widest uppercase`), structured tabular specification grids, 1px slate borders (`border-slate-200`), and mono-spaced pricing.
+  * **High-Conversion Urgency**: Deep indigo (`#1E1B4B`) surfaces paired with vibrant coral rose (`#F43F5E`) badges and primary CTAs immediately guide user focus to high-converting actions.
 
 ---
 
@@ -21,15 +22,15 @@ This document establishes the official visual identity, design tokens, color pal
 
 | Token Role | Hex Code | Tailwind Class | Usage Guidelines |
 | :--- | :--- | :--- | :--- |
-| **Primary (Brand / Typography)** | `#1E1B4B` | `indigo-950` | Primary headings (`h1`, `h2`), navigation bar background, dark interactive surfaces |
-| **On Primary (Text)** | `#FFFFFF` | `white` | Text inside primary dark headers and badges |
-| **Accent / Primary CTA** | `#F43F5E` | `rose-500` | "Add to Cart", "Proceed to Checkout", promotional price tags, sale badges |
+| **Primary (Brand / Typography)** | `#1E1B4B` | `indigo-950` | Primary headings (`h1`, `h2`), navigation bar accents, dark editorial banners, primary buttons |
+| **On Primary (Text)** | `#FFFFFF` | `white` | Text inside primary dark headers, badges, and dark hero banners |
+| **Accent / Primary CTA** | `#F43F5E` | `rose-500` | "Add to Bag", sale badges, active category indicators, VIP signup buttons |
 | **Accent Hover** | `#E11D48` | `rose-600` | Hover state for primary CTA buttons |
-| **Secondary Interactive** | `#4F46E5` | `indigo-600` | Active category links, filter pills, secondary buttons, interactive highlights |
-| **Background (Light Mode)** | `#FDF8F6` | `orange-50/30` | Warm, soft off-white canvas that eliminates eye strain and enriches product imagery |
-| **Surface / Card Background**| `#FFFFFF` | `white` | Product cards, checkout form boxes, cart drawer containers |
-| **Border / Divider** | `#E2E8F0` | `slate-200` | Crisp 1px separators between cart items, table rows, and card borders |
-| **Muted Text** | `#64748B` | `slate-500` | Secondary descriptions, product SKU numbers, inactive tabs |
+| **Secondary Interactive** | `#4F46E5` | `indigo-600` | Secondary interactive text highlights and active state underlines |
+| **Background (Canvas)** | `#FDF8F6` | `orange-50/30` or `slate-50` | Warm, soft off-white canvas that eliminates eye strain and separates content sections |
+| **Surface / Card Background**| `#FFFFFF` | `white` | Product cards, specification containers, checkout form boxes, cart drawers |
+| **Border / Divider** | `#E2E8F0` | `slate-200` | Crisp 1px structural separators between grid items, table rows, and card borders |
+| **Muted Text** | `#64748B` | `slate-500` | Secondary descriptions, product SKU numbers, inactive navigation tabs |
 | **Destructive / Error** | `#DC2626` | `red-600` | Remove cart item buttons, form validation error text, out of stock notices |
 
 ### 2.2 CSS Custom Properties (`:root`)
@@ -56,19 +57,17 @@ This document establishes the official visual identity, design tokens, color pal
 We utilize Google Fonts for seamless cross-platform rendering:
 
 * **Display / Headings (`var(--font-heading)`)**: **`Outfit`**
-  * Weights: `500` (Medium), `600` (SemiBold), `700` (Bold)
-  * Character: Contemporary, friendly geometric sans-serif that exudes retail polish.
 * **UI & Body Text (`var(--font-body)`)**: **`Inter`**
-  * Weights: `400` (Regular), `500` (Medium), `600` (SemiBold)
-  * Character: Maximum legibility at small sizes (12px–16px). Built-in tabular figures (`font-tabular-nums`) prevent price strings from shifting horizontally.
 
-### Type Scale Standards
-* **Page Title (`h1`)**: `text-3xl lg:text-4xl font-bold tracking-tight text-indigo-950`
-* **Section Header (`h2`)**: `text-2xl font-semibold tracking-tight text-indigo-950`
-* **Card Title (`h3`)**: `text-base font-semibold text-indigo-950 line-clamp-1`
-* **Product Price (Large)**: `text-2xl font-bold text-rose-500 font-mono`
-* **Body Regular**: `text-sm leading-relaxed text-slate-600`
-* **Caption / SKU**: `text-xs font-medium text-slate-400 uppercase tracking-wider`
+### Type Scale & Editorial Standards
+* **Page Title (`h1`)**: `text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-indigo-950 font-heading leading-[1.08]`
+* **Section Header (`h2`)**: `text-3xl sm:text-4xl font-extrabold tracking-tight text-indigo-950 font-heading`
+* **Card Title (`h3`)**: `text-base font-bold text-indigo-950 line-clamp-1 font-heading`
+* **Editorial Tag / Category Label**: `text-[11px] font-bold tracking-widest uppercase text-rose-500` or `text-slate-400`
+* **Product Price (Large)**: `text-3xl sm:text-4xl font-extrabold text-indigo-950 font-mono tracking-tight`
+* **Product Price (Card)**: `text-lg font-bold text-indigo-950 font-mono tracking-tight`
+* **Body Regular**: `text-sm sm:text-base leading-relaxed text-slate-600 font-normal`
+* **SKU / Caption**: `text-[10px] font-mono uppercase tracking-wider text-slate-400`
 
 ---
 
@@ -77,25 +76,32 @@ We utilize Google Fonts for seamless cross-platform rendering:
 ### 4.1 Buttons & CTAs
 * **Primary Conversion CTA**:
   ```html
-  <button class="w-full bg-rose-500 hover:bg-rose-600 active:scale-[0.98] text-white font-semibold py-3 px-6 rounded-xl shadow-md shadow-rose-500/20 transition-all duration-200 flex items-center justify-center gap-2">
-    <span>Add to Cart</span>
+  <button class="bg-indigo-950 hover:bg-rose-500 text-white font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-sm transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer active:scale-98">
+    <span>Add to Bag</span>
   </button>
   ```
 * **Secondary Action Button**:
   ```html
-  <button class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium py-2.5 px-5 rounded-xl transition-colors duration-200">
-    Filter Catalog
+  <button class="bg-white hover:bg-slate-100 text-indigo-950 font-bold text-xs uppercase tracking-wider py-2 px-4 rounded-sm border border-slate-200 transition-colors duration-200">
+    All Merch (8)
   </button>
   ```
 
 ### 4.2 Product Cards (`ProductCard`)
-* **Image Wrapper**: `relative aspect-[4/5] w-full overflow-hidden rounded-t-2xl bg-slate-100`
-* **Image Behavior**: `h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500`
-* **Card Container**: `group relative flex flex-col rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-indigo-100 transition-all duration-300`
+* **Image Wrapper**: `relative aspect-[4/5] w-full overflow-hidden bg-slate-100`
+* **Image Behavior**: `w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500`
+* **Card Container**: `group flex flex-col justify-between bg-white border border-slate-200 rounded-sm overflow-hidden transition-all duration-300 hover:border-indigo-950`
+* **Card Typography Padding**: `p-5 flex flex-col flex-1 justify-between gap-4`
 
-### 4.3 Badges & Pills
-* **Sale / Discount Badge**: `absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm`
-* **Category Tag**: `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700`
+### 4.3 Editorial Showcase (`Hero3DShowcase`)
+* **Layout**: 12-column split-screen grid (`lg:col-span-6` left typography + specs, `lg:col-span-6` right high-res photograph).
+* **Navigation Tabs**: Numbered editorial tabs (`01 / HOODIES & OUTERWEAR`, `02 / TITANIUM BRACELETS`, `03 / CARGO JOGGERS`) with simple bottom underlines (`border-b-2 border-indigo-950`).
+* **Specification Grid**: Clean 2x2 table with top/bottom 1px borders (`border-y border-slate-200 py-6`).
+
+### 4.4 Badges & Pills
+* **Sale Badge**: `bg-rose-500 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm`
+* **Low Stock Badge**: `bg-indigo-950 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm`
+* **Neutral Badge**: `bg-white text-indigo-950 border border-slate-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm`
 
 ---
 
@@ -104,5 +110,5 @@ We utilize Google Fonts for seamless cross-platform rendering:
 1. **Minimum Touch Targets**: Every clickable element (buttons, icons, checkboxes, pagination links) must enforce at least `min-h-[44px] min-w-[44px]` on mobile screen widths.
 2. **Contrast Enforcement**: Text elements must meet or exceed a **4.5:1** contrast ratio against their background surface.
 3. **Focus Ring Outline**: Never remove focus rings. Interactive inputs and buttons must display:
-   `focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2`
-4. **Zero Layout Shift**: Always specify explicit container dimensions or aspect ratios (`aspect-[4/5]`) for image grids to maintain a Cumulative Layout Shift (CLS) score below `0.1`.
+   `focus:outline-none focus:ring-2 focus:ring-indigo-950 focus:ring-offset-2`
+4. **Zero Layout Shift**: Always specify explicit container dimensions or aspect ratios (`aspect-[4/5]`, `aspect-[16/9]`) for image grids to maintain a Cumulative Layout Shift (CLS) score below `0.1`.
