@@ -3,13 +3,13 @@
 
 ---
 
-| **Document Version** | 1.0.0 |
+| **Document Version** | 1.1.0 |
 | :--- | :--- |
 | **Project Name** | **NexusCommerce MVP** |
-| **Frontend Stack** | React 19, TypeScript, Vite, Tailwind CSS, Lucide Icons |
+| **Frontend Stack** | Next.js 16 (App Router), React 19, TypeScript 5+, Tailwind CSS v4, Lucide Icons |
 | **Backend Stack** | Laravel 11/12 REST API, PHP 8.3+, Laravel Sanctum |
 | **Database Engine** | PostgreSQL 16+ (Relational + JSONB support) |
-| **Architecture Type** | Decoupled Single Page Application (SPA) + Stateless RESTful API |
+| **Architecture Type** | Decoupled Next.js Frontend (SSR + SSG + Client Components) + Stateless RESTful API |
 
 ---
 
@@ -17,10 +17,10 @@
 
 **NexusCommerce MVP** is a state-of-the-art, high-performance e-commerce platform engineered to deliver a seamless, dynamic shopping experience for retail customers while providing robust, real-time store management capabilities for administrators. 
 
-Built on a decoupled architecture comprising a responsive **React 19 single-page frontend** and an enterprise-grade **Laravel RESTful backend**, NexusCommerce enforces strict type safety, atomic inventory management, and role-based security. The platform utilizes **PostgreSQL** as its core data store, leveraging advanced relational constraints and high-performance JSONB indexing for flexible order address modeling and payment gateway metadata.
+Built on a decoupled architecture comprising a modern **Next.js 16 (App Router)** frontend and an enterprise-grade **Laravel RESTful backend**, NexusCommerce enforces strict type safety, atomic inventory management, and role-based security. The platform utilizes **PostgreSQL** as its core data store, leveraging advanced relational constraints and high-performance JSONB indexing for flexible order address modeling and payment gateway metadata.
 
 ### Key Value Propositions
-- **High-Velocity Shopping Experience**: Client-side routing, optimistic cart updates, and instant search filtering powered by React 19.
+- **High-Velocity Shopping & SEO Excellence**: Next.js App Router providing Server-Side Rendering (SSR) for dynamic product catalogs, Static Site Generation (SSG) for fast category pages, and optimistic client-side interactivity.
 - **Zero Overselling Guarantee**: Atomic database row-locking (`SELECT ... FOR UPDATE`) during checkout ensures inventory consistency under concurrent order volumes.
 - **Modular & Extensible API**: A clean REST API specification that readily scales to support mobile apps (React Native/iOS/Android) and third-party integrations.
 
@@ -29,18 +29,18 @@ Built on a decoupled architecture comprising a responsive **React 19 single-page
 ## 2. Technology Stack & Ecosystem
 
 ### 2.1 Frontend Layer (Client Application)
-* **Framework**: **React 19** with **TypeScript 5+**
-* **Build System**: **Vite 6+** (Fast Hot Module Replacement and highly optimized ESBuild bundling)
-* **Styling & UI**: **Tailwind CSS v3.4+** (Utility-first styling with custom design tokens, glassmorphism, and responsive dark mode design)
-* **State Management**: **Zustand / TanStack Query (React Query v5)** for server state synchronization, caching, and optimistic UI updates
-* **Routing**: **React Router DOM v7** (Declarative client-side navigation with nested layouts and protected route guards)
+* **Framework**: **Next.js 16** (App Router architecture utilizing React Server Components for optimal SEO and initial load speed, combined with Client Components for rich interactivity)
+* **Language**: **TypeScript 5+** (End-to-end compile-time type safety across interfaces, API fetchers, and server actions)
+* **Styling & UI**: **Tailwind CSS v4** (Utility-first styling configured with Option C: Nordic Minimalist Indigo & Coral design tokens, responsive dark mode, and glassmorphic depth)
+* **State Management & Data Fetching**: **Zustand / TanStack Query (React Query v5)** for client-side state synchronization, cart persistence, and optimistic UI updates, paired with Next.js native `fetch` caching and revalidation on server components
+* **Routing**: Next.js App Router (`app/` directory) with nested layouts, loading skeletons, error boundaries, and middleware-based route protection
 * **Icons & Assets**: **Lucide React** (Vector-based, accessible iconography)
 * **Form & Validation**: **React Hook Form** + **Zod** (Schema-first client-side form validation matching backend rules)
 
 ### 2.2 Backend Layer (API Gateway & Core Logic)
 * **Framework**: **Laravel 11/12 (PHP 8.3+)** configured in dedicated API mode
-* **Authentication & Authorization**: **Laravel Sanctum** (State-aware API tokens for SPAs and stateless Bearer tokens for external services) + **Role-Based Access Control (RBAC)** Middleware
-* **Database ORM**: **Eloquent ORM** with Strict Mode enabled (preventing lazy loading anomalies and unassignable attributes)
+* **Authentication & Authorization**: **Laravel Sanctum** (State-aware API tokens and stateless Bearer tokens for external services) + **Role-Based Access Control (RBAC)** Middleware
+* **Database ORM**: **Eloquent ORM** with Strict Mode enabled (`shouldBeStrict()`, preventing lazy loading N+1 anomalies and unassignable attributes)
 * **API Validation**: Form Requests with customized error payloads and automated HTTP `422 Unprocessable Entity` formatting
 * **Background Jobs**: **Laravel Queue Workers** (Redis / Database backed) for asynchronous order confirmation emails, invoice PDF generation, and webhook dispatching
 
@@ -54,12 +54,12 @@ Built on a decoupled architecture comprising a responsive **React 19 single-page
 ## 3. Comprehensive Feature Breakdown
 
 ### 3.1 Product Catalog
-* **Dynamic Grid & List Views**: Responsive product cards featuring hover zoom, badges (e.g., *Featured*, *Low Stock*, *Sale*), and quick add-to-cart actions.
+* **Dynamic Grid & List Views**: Responsive product cards featuring hover zoom, badges (*Featured*, *Low Stock*, *Sale*), and quick add-to-cart actions.
 * **Advanced Search & Filtering**: Filter products instantly by Category hierarchy, Price Range, Stock Availability, and Search keyword matching against title and summary.
-* **Product Detail Page (PDP)**: High-resolution image gallery carousel, comprehensive technical descriptions, stock status indicators, SKU information, and quantity selectors.
+* **Product Detail Page (PDP)**: Server-rendered for maximum SEO discoverability, featuring high-resolution image gallery carousels, comprehensive technical descriptions, real-time stock status indicators, SKU information, and quantity selectors.
 
 ### 3.2 Shopping Cart
-* **Dual-State Cart System**: Guest session UUID carts that seamlessly merge into authenticated customer carts upon login.
+* **Dual-State Cart System**: Guest session UUID carts stored in local/cookie state that seamlessly merge into authenticated customer carts upon login.
 * **Instant Cart Operations**: Real-time quantity adjustment, item deletion, and cart clearing without full page reloads.
 * **Live Price Summary**: Dynamic calculation of item subtotals, configurable tax rates, shipping fee estimates, and discount coupon applications.
 
@@ -98,8 +98,9 @@ Built on a decoupled architecture comprising a responsive **React 19 single-page
 ```mermaid
 graph TD
     subgraph Client Layer ["Client Layer (Browser / Mobile)"]
-        UI["React 19 SPA Frontend"]
-        Zustand["Zustand / React Query State"]
+        UI["Next.js 16 Frontend (App Router)"]
+        RSC["React Server Components (SSR/SSG)"]
+        State["Zustand / React Query (Client State)"]
     end
 
     subgraph API Gateway ["API Gateway (Laravel REST API)"]
@@ -116,6 +117,7 @@ graph TD
     end
 
     UI <-->|HTTPS / JSON REST API| Sanctum
+    RSC <-->|Server-to-Server Fetch| Router
     Sanctum --> Router
     Router --> Controllers
     Controllers --> Services
@@ -129,7 +131,7 @@ graph TD
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Customer as Customer (React UI)
+    actor Customer as Customer (Next.js UI)
     participant API as Laravel REST API
     participant Cart as Cart Service
     participant Inv as Inventory Service
@@ -390,7 +392,7 @@ All endpoints are prefixed with `/api/v1` and communicate via `application/json`
 
 ### 7.1 Security Enforcement
 1. **Input Validation & Sanitization**: Every API request is checked through strict Laravel Form Requests (`Zod` validation on frontend). SQL injection is eliminated via Eloquent parameterized query bindings.
-2. **CSRF & CORS Protection**: CORS configured exclusively for trusted frontend origins (`http://localhost:5173`, production domains). CSRF tokens validated for cookie-based sessions.
+2. **CSRF & CORS Protection**: CORS configured exclusively for trusted frontend origins (`http://localhost:3000`, production domains). CSRF tokens validated for cookie-based sessions.
 3. **Password Security**: Passwords hashed securely using **Bcrypt (cost factor 12)** or Argon2id.
 4. **Row-Level Security (RLS) / Tenant Isolation**: Customers can only query or modify their own order histories and carts via controller authorization policies.
 
@@ -406,6 +408,8 @@ All endpoints are prefixed with `/api/v1` and communicate via `application/json`
 ```text
 e-commerce-sample/
 ├── PROJECT_DOCUMENTATION.md          # Complete Technical Specification & Architecture Guide (This File)
+├── PROJECT.md                        # Quick Architectural Reference & Onboarding Guide
+├── DESIGN_SYSTEM.md                  # Option C (Nordic Minimalist Indigo & Coral) Design Standards
 ├── database_schema.sql               # Production PostgreSQL DDL Schema & Seed Data
 ├── backend/
 │   └── e-commerce-backend/           # Laravel 11/12 REST API Codebase
@@ -417,12 +421,15 @@ e-commerce-sample/
 │       ├── database/migrations/         # Laravel Schema Migrations matching database_schema.sql
 │       └── routes/api.php               # API v1 Route Definitions
 └── frontend/
-    └── e-commerce/                   # React 19 + Vite + Tailwind CSS Application
-        ├── public/
-        └── src/
-            ├── components/              # UI Components (Navbar, ProductCard, CartDrawer, Badge)
-            ├── pages/                   # Route Pages (Home, Catalog, PDP, Cart, Checkout, Admin)
-            ├── services/                # Axios / Fetch API Clients & Endpoints
-            ├── store/                   # Zustand Global State Stores
-            └── types/                   # TypeScript Interfaces matching Backend API Payloads
+    └── e-commerce-frontend/          # Next.js 16 (App Router) + Tailwind CSS v4 Codebase
+        ├── app/                      # Next.js App Router Pages, Layouts, and API Routes
+        │   ├── (auth)/               # Auth routes (login, register)
+        │   ├── (shop)/               # Shop routes (catalog, products/[slug], cart, checkout)
+        │   ├── admin/                # Protected Admin Portal routes
+        │   ├── globals.css           # Global Tailwind v4 styles & Option C design tokens
+        │   └── layout.tsx            # Root Server Layout with font providers
+        ├── components/               # Reusable UI Components (Navbar, ProductCard, CartDrawer)
+        ├── lib/                      # API fetch clients, query providers, utility helpers
+        ├── store/                    # Zustand Global State Stores (useCartStore, useAuthStore)
+        └── types/                    # TypeScript Interfaces matching Backend API Payloads
 ```

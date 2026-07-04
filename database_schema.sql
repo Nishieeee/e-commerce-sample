@@ -2,7 +2,7 @@
 -- NexusCommerce MVP - PostgreSQL Database Schema
 -- Version: 1.0.0
 -- Dialect: PostgreSQL 14+
--- Description: Comprehensive relational schema for React + Laravel E-Commerce MVP
+-- Description: Comprehensive relational schema for Next.js 16 (App Router) + Laravel E-Commerce MVP
 -- ============================================================================
 
 -- Enable UUID extension if needed for cart/session tracking
