@@ -9,7 +9,7 @@ import Link from 'next/link';
 export default function FeaturedGrid() {
   const [filter, setFilter] = useState<'all' | 'hoodie' | 'shirt' | 'pants' | 'bracelet'>('all');
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
-  const { addItem, toggleDrawer } = useCartStore();
+  const { addItem } = useCartStore();
 
   const filteredProducts = filter === 'all'
     ? SAMPLE_CATALOG_PRODUCTS
@@ -27,7 +27,6 @@ export default function FeaturedGrid() {
     });
 
     setAddedItems(prev => ({ ...prev, [product.id]: true }));
-    toggleDrawer(true);
 
     setTimeout(() => {
       setAddedItems(prev => ({ ...prev, [product.id]: false }));

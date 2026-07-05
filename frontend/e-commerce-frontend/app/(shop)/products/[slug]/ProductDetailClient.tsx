@@ -27,7 +27,7 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({ slug }: ProductDetailClientProps) {
   const [quantity, setQuantity] = useState<number>(1);
   const [isAdded, setIsAdded] = useState<boolean>(false);
-  const { addItem, toggleDrawer } = useCartStore();
+  const { addItem } = useCartStore();
 
   const {
     data: product,
@@ -107,7 +107,6 @@ export default function ProductDetailClient({ slug }: ProductDetailClientProps) 
     });
 
     setIsAdded(true);
-    toggleDrawer(true);
 
     setTimeout(() => {
       setIsAdded(false);

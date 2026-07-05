@@ -11,7 +11,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false);
-  const { addItem, toggleDrawer } = useCartStore();
+  const { addItem } = useCartStore();
 
   const isSoldOut = product.stock !== undefined && product.stock === 0;
   const isLowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
@@ -32,7 +32,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     });
 
     setIsAdded(true);
-    toggleDrawer(true);
 
     setTimeout(() => {
       setIsAdded(false);
