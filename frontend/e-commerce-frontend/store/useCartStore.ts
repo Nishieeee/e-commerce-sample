@@ -30,6 +30,7 @@ interface CartState {
   items: CartItem[];
   isOpen: boolean;
   lastOrder: OrderReceipt | null;
+  lastAddedTimestamp: number | null;
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -44,19 +45,26 @@ export const useCartStore = create<CartState>()(
       items: [],
       isOpen: false,
       lastOrder: null,
+      lastAddedTimestamp: null,
       addItem: (item) =>
         set((state) => {
           // Check if item with exact same productId already exists in bag
           const existingIndex = state.items.findIndex((i) => i.productId === item.productId);
+          let updatedItems;
           if (existingIndex > -1) {
-            const updatedItems = [...state.items];
+            updatedItems = [...state.items];
             updatedItems[existingIndex] = {
               ...updatedItems[existingIndex],
               quantity: updatedItems[existingIndex].quantity + item.quantity,
             };
-            return { items: updatedItems };
+          } else {
+            updatedItems = [...state.items, item];
           }
-          return { items: [...state.items, item] };
+          return {
+            items: updatedItems,
+            isOpen: true,
+            lastAddedTimestamp: Date.now(),
+          };
         }),
       removeItem: (id) =>
         set((state) => ({

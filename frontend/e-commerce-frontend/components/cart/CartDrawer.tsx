@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { X, ShoppingBag, ArrowRight, Truck, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, ShoppingBag, ArrowRight, Truck, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import CartItemRow from './CartItemRow';
 
 export default function CartDrawer() {
-  const { items, isOpen, toggleDrawer, clearCart } = useCartStore();
+  const { items, isOpen, toggleDrawer, clearCart, lastAddedTimestamp } = useCartStore();
+  const [isHovered, setIsHovered] = useState(false);
+  const [isAutoClosing, setIsAutoClosing] = useState(false);
 
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -22,11 +24,28 @@ export default function CartDrawer() {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      setIsAutoClosing(false);
     }
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
+
+  // Auto-close animation after 2.5 seconds when item is newly added!
+  useEffect(() => {
+    if (isOpen && lastAddedTimestamp && Date.now() - lastAddedTimestamp < 3500) {
+      setIsAutoClosing(true);
+      const timer = setTimeout(() => {
+        if (!isHovered) {
+          toggleDrawer(false);
+          setIsAutoClosing(false);
+        }
+      }, 2500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsAutoClosing(false);
+    }
+  }, [isOpen, lastAddedTimestamp, isHovered, toggleDrawer]);
 
   if (!isOpen) return null;
 
@@ -41,7 +60,11 @@ export default function CartDrawer() {
 
       {/* Slide-over right panel */}
       <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300">
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="w-screen max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300"
+        >
           
           {/* Header */}
           <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
@@ -67,6 +90,19 @@ export default function CartDrawer() {
               <X className="w-5 h-5" />
             </button>
           </div>
+
+          {/* Auto-Close Confirmation Animation Bar */}
+          {isAutoClosing && (
+            <div className="bg-emerald-600 text-white px-6 py-2.5 flex items-center justify-between text-xs font-bold animate-in slide-in-from-top duration-300 shadow-sm">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-white animate-bounce" />
+                <span>Item Added! Auto-closing bag...</span>
+              </span>
+              <span className="text-[10px] bg-emerald-700 px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                Hover to Pause
+              </span>
+            </div>
+          )}
 
           {/* Free Shipping Progress Bar */}
           <div className="bg-indigo-950/5 border-b border-slate-200 px-6 py-3.5">
