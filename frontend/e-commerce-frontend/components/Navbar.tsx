@@ -2,10 +2,14 @@
 
 import React, { useState } from 'react';
 import { ShoppingBag, Search, User, Menu, X, ArrowRight, Heart } from 'lucide-react';
+import { useCartStore } from '@/store/useCartStore';
+import { CartDrawer } from '@/components/cart';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cartCount] = useState(2);
+  const { items, toggleDrawer } = useCartStore();
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
@@ -37,21 +41,24 @@ export default function Navbar() {
 
         {/* Center: Editorial Desktop Links */}
         <div className="hidden lg:flex items-center justify-center gap-8 text-xs font-semibold tracking-wider uppercase text-slate-700">
-          <a href="#hoodies" className="hover:text-rose-500 transition-colors py-2">
+          <Link href="/catalog" className="hover:text-rose-500 transition-colors py-2">
+            All Merch
+          </Link>
+          <Link href="/catalog" className="hover:text-rose-500 transition-colors py-2">
             Hoodies
-          </a>
-          <a href="#shirts" className="hover:text-rose-500 transition-colors py-2">
+          </Link>
+          <Link href="/catalog" className="hover:text-rose-500 transition-colors py-2">
             Tees & Tops
-          </a>
-          <a href="#pants" className="hover:text-rose-500 transition-colors py-2">
+          </Link>
+          <Link href="/catalog" className="hover:text-rose-500 transition-colors py-2">
             Bottoms
-          </a>
-          <a href="#bracelets" className="hover:text-rose-500 transition-colors py-2">
+          </Link>
+          <Link href="/catalog" className="hover:text-rose-500 transition-colors py-2">
             Accessories
-          </a>
-          <a href="#deals" className="text-rose-600 font-bold hover:text-indigo-950 transition-colors py-2 flex items-center gap-1">
-            <span>Collection 04</span>
-          </a>
+          </Link>
+          <Link href="/catalog" className="text-rose-600 font-bold hover:text-indigo-950 transition-colors py-2 flex items-center gap-1">
+            <span>Collection 04 Drop</span>
+          </Link>
         </div>
 
         {/* Right: Functional UI Actions */}
@@ -87,8 +94,9 @@ export default function Navbar() {
 
           {/* Bag Button */}
           <button 
+            onClick={() => toggleDrawer(true)}
             aria-label="Shopping Bag"
-            className="bg-indigo-950 hover:bg-rose-500 text-white px-4 py-2.5 rounded-sm transition-colors flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider cursor-pointer"
+            className="bg-indigo-950 hover:bg-rose-500 text-white px-4 py-2.5 rounded-sm transition-colors flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-sm"
           >
             <ShoppingBag className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Bag</span>
@@ -120,24 +128,30 @@ export default function Navbar() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           </div>
           <div className="flex flex-col space-y-3 font-heading text-sm font-semibold uppercase tracking-wider text-slate-800">
-            <a href="#hoodies" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
+              All Merch Catalog
+            </Link>
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
               Hoodies & Outerwear
-            </a>
-            <a href="#shirts" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
+            </Link>
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
               Tees & Tops
-            </a>
-            <a href="#pants" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
+            </Link>
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
               Bottoms & Joggers
-            </a>
-            <a href="#bracelets" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
+            </Link>
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-rose-500">
               Accessories & Gear
-            </a>
-            <a href="#deals" onClick={() => setMobileMenuOpen(false)} className="py-2 text-rose-600 font-bold">
+            </Link>
+            <Link href="/catalog" onClick={() => setMobileMenuOpen(false)} className="py-2 text-rose-600 font-bold">
               Collection 04 Drop
-            </a>
+            </Link>
           </div>
         </div>
       )}
+
+      {/* Slide-over Cart Drawer */}
+      <CartDrawer />
     </header>
   );
 }

@@ -2,156 +2,35 @@
 
 import React, { useState } from 'react';
 import { ShoppingBag, Star, Check, Heart, Eye, ArrowUpRight } from 'lucide-react';
-
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  sku: string;
-  category: 'hoodie' | 'shirt' | 'pants' | 'bracelet';
-  categoryLabel: string;
-  price: number;
-  compareAtPrice?: number;
-  rating: number;
-  reviews: number;
-  imageUrl: string;
-  badge?: string;
-  badgeType?: 'sale' | 'low_stock' | 'featured';
-}
-
-const SAMPLE_PRODUCTS: Product[] = [
-  {
-    id: 'm1',
-    name: 'Core 400 GSM Heavyweight Hoodie',
-    slug: 'core-heavyweight-hoodie',
-    sku: 'MRCH-HD-001',
-    category: 'hoodie',
-    categoryLabel: 'Hoodies & Outerwear',
-    price: 89.00,
-    compareAtPrice: 115.00,
-    rating: 4.9,
-    reviews: 1840,
-    imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80',
-    badge: 'COLLECTION 04',
-    badgeType: 'featured'
-  },
-  {
-    id: 'm2',
-    name: 'Boxy Fit Heavy-Cotton Graphic Tee',
-    slug: 'boxy-heavy-graphic-tee',
-    sku: 'MRCH-TE-002',
-    category: 'shirt',
-    categoryLabel: 'Tees & Tops',
-    price: 45.00,
-    compareAtPrice: 60.00,
-    rating: 4.9,
-    reviews: 940,
-    imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
-    badge: '15% OFF',
-    badgeType: 'sale'
-  },
-  {
-    id: 'm3',
-    name: 'Matte Onyx & Titanium Cuff Bracelet',
-    slug: 'onyx-titanium-bracelet',
-    sku: 'MRCH-BR-003',
-    category: 'bracelet',
-    categoryLabel: 'Bracelets & Gear',
-    price: 65.00,
-    compareAtPrice: 85.00,
-    rating: 4.8,
-    reviews: 920,
-    imageUrl: 'https://images.unsplash.com/photo-1611591471483-ed174d5772a1?auto=format&fit=crop&w=800&q=80',
-    badge: 'LOW STOCK',
-    badgeType: 'low_stock'
-  },
-  {
-    id: 'm4',
-    name: 'Relaxed Fit Utility Cargo Joggers',
-    slug: 'utility-cargo-joggers',
-    sku: 'MRCH-PT-004',
-    category: 'pants',
-    categoryLabel: 'Bottoms & Joggers',
-    price: 95.00,
-    compareAtPrice: 120.00,
-    rating: 4.9,
-    reviews: 640,
-    imageUrl: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80',
-    badge: 'NEW ARRIVAL',
-    badgeType: 'featured'
-  },
-  {
-    id: 'm5',
-    name: 'Oversized Acid-Wash Zip Hoodie',
-    slug: 'acid-wash-zip-hoodie',
-    sku: 'MRCH-HD-005',
-    category: 'hoodie',
-    categoryLabel: 'Hoodies & Outerwear',
-    price: 98.00,
-    rating: 4.8,
-    reviews: 510,
-    imageUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
-    badge: 'HEAVYWEIGHT',
-    badgeType: 'featured'
-  },
-  {
-    id: 'm6',
-    name: 'Minimalist Monogram Pocket Top',
-    slug: 'monogram-pocket-top',
-    sku: 'MRCH-TE-006',
-    category: 'shirt',
-    categoryLabel: 'Tees & Tops',
-    price: 38.00,
-    compareAtPrice: 48.00,
-    rating: 4.7,
-    reviews: 420,
-    imageUrl: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
-    badge: 'RESTOCKED',
-    badgeType: 'sale'
-  },
-  {
-    id: 'm7',
-    name: 'Engraved Silver Chain Cuff Bracelet',
-    slug: 'engraved-silver-bracelet',
-    sku: 'MRCH-BR-007',
-    category: 'bracelet',
-    categoryLabel: 'Bracelets & Gear',
-    price: 75.00,
-    compareAtPrice: 95.00,
-    rating: 4.9,
-    reviews: 380,
-    imageUrl: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80',
-    badge: '20% OFF',
-    badgeType: 'sale'
-  },
-  {
-    id: 'm8',
-    name: 'Tapered French Terry Track Pants',
-    slug: 'french-terry-track-pants',
-    sku: 'MRCH-PT-008',
-    category: 'pants',
-    categoryLabel: 'Bottoms & Joggers',
-    price: 78.00,
-    rating: 4.8,
-    reviews: 530,
-    imageUrl: 'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?auto=format&fit=crop&w=800&q=80',
-    badge: 'BEST SELLER',
-    badgeType: 'featured'
-  }
-];
+import { SAMPLE_CATALOG_PRODUCTS } from '@/lib/api/products';
+import { useCartStore } from '@/store/useCartStore';
+import Link from 'next/link';
 
 export default function FeaturedGrid() {
   const [filter, setFilter] = useState<'all' | 'hoodie' | 'shirt' | 'pants' | 'bracelet'>('all');
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({});
+  const { addItem, toggleDrawer } = useCartStore();
 
   const filteredProducts = filter === 'all'
-    ? SAMPLE_PRODUCTS
-    : SAMPLE_PRODUCTS.filter(p => p.category === filter);
+    ? SAMPLE_CATALOG_PRODUCTS
+    : SAMPLE_CATALOG_PRODUCTS.filter(p => p.category === filter);
 
-  const handleAdd = (id: string) => {
-    setAddedItems(prev => ({ ...prev, [id]: true }));
+  const handleAdd = (product: typeof SAMPLE_CATALOG_PRODUCTS[number]) => {
+    addItem({
+      id: `${product.id}-${Date.now()}`,
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      imageUrl: product.imageUrl,
+      sku: product.sku,
+    });
+
+    setAddedItems(prev => ({ ...prev, [product.id]: true }));
+    toggleDrawer(true);
+
     setTimeout(() => {
-      setAddedItems(prev => ({ ...prev, [id]: false }));
+      setAddedItems(prev => ({ ...prev, [product.id]: false }));
     }, 2000);
   };
 
@@ -180,7 +59,7 @@ export default function FeaturedGrid() {
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-slate-100'
               }`}
             >
-              All Merch ({SAMPLE_PRODUCTS.length})
+              All Merch ({SAMPLE_CATALOG_PRODUCTS.length})
             </button>
             <button
               onClick={() => setFilter('hoodie')}
@@ -190,7 +69,7 @@ export default function FeaturedGrid() {
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-slate-100'
               }`}
             >
-              Hoodies ({SAMPLE_PRODUCTS.filter(p => p.category === 'hoodie').length})
+              Hoodies ({SAMPLE_CATALOG_PRODUCTS.filter(p => p.category === 'hoodie').length})
             </button>
             <button
               onClick={() => setFilter('shirt')}
@@ -200,7 +79,7 @@ export default function FeaturedGrid() {
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-slate-100'
               }`}
             >
-              Tees & Tops ({SAMPLE_PRODUCTS.filter(p => p.category === 'shirt').length})
+              Tees & Tops ({SAMPLE_CATALOG_PRODUCTS.filter(p => p.category === 'shirt').length})
             </button>
             <button
               onClick={() => setFilter('pants')}
@@ -210,7 +89,7 @@ export default function FeaturedGrid() {
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-slate-100'
               }`}
             >
-              Bottoms ({SAMPLE_PRODUCTS.filter(p => p.category === 'pants').length})
+              Bottoms ({SAMPLE_CATALOG_PRODUCTS.filter(p => p.category === 'pants').length})
             </button>
             <button
               onClick={() => setFilter('bracelet')}
@@ -220,7 +99,7 @@ export default function FeaturedGrid() {
                   : 'text-slate-600 hover:text-indigo-950 hover:bg-slate-100'
               }`}
             >
-              Accessories ({SAMPLE_PRODUCTS.filter(p => p.category === 'bracelet').length})
+              Accessories ({SAMPLE_CATALOG_PRODUCTS.filter(p => p.category === 'bracelet').length})
             </button>
           </div>
         </div>
@@ -237,11 +116,13 @@ export default function FeaturedGrid() {
               >
                 {/* Image Aspect Ratio Container */}
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-slate-100">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
-                  />
+                  <Link href={`/products/${product.slug}`}>
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover object-center group-hover:scale-103 transition-transform duration-500"
+                    />
+                  </Link>
 
                   {/* Top Badges */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
@@ -266,12 +147,13 @@ export default function FeaturedGrid() {
                     >
                       <Heart className="w-4 h-4" />
                     </button>
-                    <button 
+                    <Link 
+                      href={`/products/${product.slug}`}
                       aria-label="Quick View"
                       className="w-8 h-8 rounded-sm bg-white text-indigo-950 hover:text-rose-500 flex items-center justify-center shadow-sm border border-slate-200 transition-colors cursor-pointer"
                     >
                       <Eye className="w-4 h-4" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
 
@@ -286,7 +168,7 @@ export default function FeaturedGrid() {
 
                     {/* Product Name */}
                     <h3 className="font-bold text-base text-indigo-950 group-hover:text-rose-600 transition-colors line-clamp-1 font-heading">
-                      <a href={`#product-${product.slug}`}>{product.name}</a>
+                      <Link href={`/products/${product.slug}`}>{product.name}</Link>
                     </h3>
                   </div>
 
@@ -304,7 +186,7 @@ export default function FeaturedGrid() {
                     </div>
 
                     <button
-                      onClick={() => handleAdd(product.id)}
+                      onClick={() => handleAdd(product)}
                       className={`px-4 py-2 rounded-sm font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
                         isAdded
                           ? 'bg-emerald-600 text-white'
@@ -332,13 +214,13 @@ export default function FeaturedGrid() {
 
         {/* View Catalog Bottom CTA */}
         <div className="mt-16 text-center">
-          <a
-            href="#catalog"
+          <Link
+            href="/catalog"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-sm bg-indigo-950 text-white font-bold text-xs uppercase tracking-widest hover:bg-rose-500 transition-colors cursor-pointer"
           >
-            <span>Explore Complete Collection 04 (45 Items)</span>
+            <span>Explore Complete Collection 04 ({SAMPLE_CATALOG_PRODUCTS.length} Items)</span>
             <ArrowUpRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
 
       </div>

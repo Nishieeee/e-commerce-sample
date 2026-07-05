@@ -14,6 +14,10 @@ export interface Product {
   badgeType?: 'sale' | 'low_stock' | 'featured';
   description?: string;
   specs?: { label: string; value: string }[];
+  stock?: number;
+  images?: string[];
+  featured?: boolean;
+  createdAt?: string;
 }
 
 export interface Category {
