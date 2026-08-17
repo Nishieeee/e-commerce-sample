@@ -1,0 +1,128 @@
+erDiagram
+    users ||--o{ addresses : "has many"
+    users ||--o{ carts : "owns"
+    users ||--o{ orders : "places"
+    users ||--o{ inventory_logs : "creates"
+
+    categories ||--o{ categories : "parent of (self-referential)"
+    categories ||--o{ products : "contains"
+
+    products ||--o{ product_images : "has many"
+    products ||--|| inventory_items : "has one"
+    products ||--o{ inventory_logs : "has many"
+    products ||--o{ cart_items : "added as"
+    products ||--o{ order_items : "bought as"
+
+    carts ||--o{ cart_items : "contains"
+
+    orders ||--o{ order_items : "contains"
+    orders ||--o{ payments : "paid via"
+
+    users {
+        BIGSERIAL id PK
+        VARCHAR name
+        VARCHAR email
+        VARCHAR password
+        VARCHAR role
+        VARCHAR phone
+        BOOLEAN is_active
+    }
+
+    addresses {
+        BIGSERIAL id PK
+        BIGINT user_id FK
+        VARCHAR label
+        VARCHAR full_name
+        VARCHAR address_line1
+        VARCHAR city
+        VARCHAR state
+        VARCHAR postal_code
+        VARCHAR country
+    }
+
+    categories {
+        BIGSERIAL id PK
+        BIGINT parent_id FK
+        VARCHAR name
+        VARCHAR slug
+        TEXT description
+    }
+
+    products {
+        BIGSERIAL id PK
+        BIGINT category_id FK
+        VARCHAR name
+        VARCHAR slug
+        VARCHAR sku
+        NUMERIC price
+        NUMERIC compare_at_price
+        NUMERIC rating
+        INTEGER reviews
+        VARCHAR badge
+        VARCHAR badge_type
+        JSONB specs
+    }
+
+    product_images {
+        BIGSERIAL id PK
+        BIGINT product_id FK
+        VARCHAR image_url
+        BOOLEAN is_primary
+    }
+
+    inventory_items {
+        BIGSERIAL id PK
+        BIGINT product_id FK
+        INTEGER quantity
+        INTEGER reserved_quantity
+        INTEGER low_stock_threshold
+    }
+
+    inventory_logs {
+        BIGSERIAL id PK
+        BIGINT product_id FK
+        INTEGER change_quantity
+        VARCHAR reason
+        BIGINT created_by FK
+    }
+
+    carts {
+        UUID id PK
+        BIGINT user_id FK
+        VARCHAR session_id
+        TIMESTAMP expires_at
+    }
+
+    cart_items {
+        BIGSERIAL id PK
+        UUID cart_id FK
+        BIGINT product_id FK
+        INTEGER quantity
+        NUMERIC price_at_add
+    }
+
+    orders {
+        BIGSERIAL id PK
+        VARCHAR order_number
+        BIGINT user_id FK
+        VARCHAR status
+        NUMERIC total_amount
+        JSONB shipping_address
+    }
+
+    order_items {
+        BIGSERIAL id PK
+        BIGINT order_id FK
+        BIGINT product_id FK
+        INTEGER quantity
+        NUMERIC unit_price
+        NUMERIC total_price
+    }
+
+    payments {
+        BIGSERIAL id PK
+        BIGINT order_id FK
+        VARCHAR payment_method
+        VARCHAR payment_status
+        NUMERIC amount
+    }

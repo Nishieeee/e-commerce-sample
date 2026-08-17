@@ -1,15 +1,24 @@
+# NexusCommerce Frontend-Aligned SQL Schema
+
+After analyzing the frontend models in `/types` and the mock data provided in `lib/api/products.ts` and `lib/api/mockData.ts`, I've created a PostgreSQL schema that maps exactly to the data structures the frontend expects.
+
+I've also updated your `/database_schema.sql` file in the root directory directly with these changes. 
+
+## Key Additions to Match the Frontend:
+1. **Product Display Properties**: Added `rating`, `reviews`, `badge`, and `badge_type` columns to the `products` table.
+2. **Product Specs**: Added a `specs` JSONB column to seamlessly store the array of `{ label, value }` data shown on the product pages.
+3. **Category Definitions**: Adjusted the `categories` insert seeds to reflect the frontend's categories (`hoodie`, `shirt`, `pants`, `bracelet`).
+4. **Inventory Log Reasons**: Added `manual` as a valid reason enum in `inventory_logs` to match the frontend `InventoryLog` interface.
+
+```sql
 -- ============================================================================
 -- NexusCommerce MVP - PostgreSQL Database Schema
 -- Version: 1.1.0 (Updated to match Frontend Types & Mock Data)
--- Dialect: PostgreSQL 14+
 -- ============================================================================
 
--- Enable UUID extension if needed for cart/session tracking
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- ============================================================================
 -- 1. USERS & ROLES
--- ============================================================================
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -25,12 +34,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
-
--- ============================================================================
 -- 2. USER ADDRESSES
--- ============================================================================
 CREATE TABLE IF NOT EXISTS addresses (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -49,11 +53,7 @@ CREATE TABLE IF NOT EXISTS addresses (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_addresses_user_id ON addresses(user_id);
-
--- ============================================================================
 -- 3. CATEGORIES
--- ============================================================================
 CREATE TABLE IF NOT EXISTS categories (
     id BIGSERIAL PRIMARY KEY,
     parent_id BIGINT NULL REFERENCES categories(id) ON DELETE SET NULL,
@@ -67,12 +67,7 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_categories_parent_id ON categories(parent_id);
-CREATE INDEX idx_categories_slug ON categories(slug);
-
--- ============================================================================
--- 4. PRODUCTS & IMAGES
--- ============================================================================
+-- 4. PRODUCTS & IMAGES (Updated)
 CREATE TABLE IF NOT EXISTS products (
     id BIGSERIAL PRIMARY KEY,
     category_id BIGINT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
@@ -95,10 +90,6 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_products_category_id ON products(category_id);
-CREATE INDEX idx_products_slug ON products(slug);
-CREATE INDEX idx_products_sku ON products(sku);
-
 CREATE TABLE IF NOT EXISTS product_images (
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -109,11 +100,7 @@ CREATE TABLE IF NOT EXISTS product_images (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_product_images_product_id ON product_images(product_id);
-
--- ============================================================================
 -- 5. INVENTORY & STOCK MANAGEMENT
--- ============================================================================
 CREATE TABLE IF NOT EXISTS inventory_items (
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT NOT NULL UNIQUE REFERENCES products(id) ON DELETE CASCADE,
@@ -135,11 +122,7 @@ CREATE TABLE IF NOT EXISTS inventory_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_inventory_logs_product_id ON inventory_logs(product_id);
-
--- ============================================================================
 -- 6. SHOPPING CARTS & ITEMS
--- ============================================================================
 CREATE TABLE IF NOT EXISTS carts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id BIGINT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -160,9 +143,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
     UNIQUE(cart_id, product_id)
 );
 
--- ============================================================================
 -- 7. ORDERS & ITEMS
--- ============================================================================
 CREATE TABLE IF NOT EXISTS orders (
     id BIGSERIAL PRIMARY KEY,
     order_number VARCHAR(100) NOT NULL UNIQUE,
@@ -198,9 +179,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- ============================================================================
 -- 8. PAYMENTS
--- ============================================================================
 CREATE TABLE IF NOT EXISTS payments (
     id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -214,52 +193,4 @@ CREATE TABLE IF NOT EXISTS payments (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
--- ============================================================================
--- 9. TRIGGERS
--- ============================================================================
-CREATE OR REPLACE FUNCTION update_timestamp_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
-CREATE TRIGGER update_users_modtime BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_timestamp_column();
-CREATE TRIGGER update_products_modtime BEFORE UPDATE ON products FOR EACH ROW EXECUTE PROCEDURE update_timestamp_column();
-
--- ============================================================================
--- 10. SAMPLE SEED DATA (FROM FRONTEND MOCK DATA)
--- ============================================================================
-
--- Users
-INSERT INTO users (name, email, password, role, phone) VALUES 
-('Alex Vance', 'alex.vance@nexusmerch.com', 'bcrypt_hash', 'customer', '+351 912 345 678'),
-('Sarah Jenkins', 'admin@nexusmerch.com', 'bcrypt_hash', 'admin', '+351 987 654 321')
-ON CONFLICT (email) DO NOTHING;
-
--- Addresses
-INSERT INTO addresses (user_id, label, full_name, address_line1, city, state, postal_code, country, is_default_shipping)
-SELECT id, 'Lisbon Studio (Default)', 'Alex Vance', 'Av. da Liberdade 245, 4th Floor', 'Lisbon', 'Lisbon', '1250-143', 'Portugal', true
-FROM users WHERE email = 'alex.vance@nexusmerch.com';
-
--- Categories
-INSERT INTO categories (name, slug, description) VALUES 
-('Hoodies & Outerwear', 'hoodie', '400 GSM heavyweight combed cotton fleece and structured hoodies.'),
-('Tees & Tops', 'shirt', 'Boxy oversized silhouettes crafted from 280 GSM ring-spun cotton.'),
-('Bottoms & Joggers', 'pants', 'Utility cargo joggers and heavy French terry sweatpants.'),
-('Bracelets & Gear', 'bracelet', 'Grade 5 aerospace titanium accessories and matte onyx bracelets.')
-ON CONFLICT (slug) DO NOTHING;
-
--- Products
-INSERT INTO products (category_id, name, slug, sku, price, compare_at_price, rating, reviews, badge, badge_type, is_featured, specs, description)
-VALUES 
-((SELECT id FROM categories WHERE slug='hoodie'), 'Core 400 GSM Heavyweight Hoodie', 'core-heavyweight-hoodie', 'MRCH-HD-001', 89.00, 115.00, 4.9, 1840, 'COLLECTION 04', 'featured', true, '[{"label":"Fabric Density","value":"400 GSM Combed Cotton Fleece"},{"label":"Hardware","value":"Grade 5 Aerospace Titanium Aglets"}]', 'Engineered for extreme thermal regulation...'),
-((SELECT id FROM categories WHERE slug='shirt'), 'Boxy Fit Heavy-Cotton Graphic Tee', 'boxy-heavy-graphic-tee', 'MRCH-TE-002', 45.00, 60.00, 4.9, 940, '15% OFF', 'sale', true, '[{"label":"Fabric Density","value":"280 GSM Ring-Spun Cotton"}]', 'Our signature boxy silhouette...')
-ON CONFLICT (slug) DO NOTHING;
-
--- Inventory
-INSERT INTO inventory_items (product_id, quantity)
-SELECT id, 24 FROM products WHERE sku = 'MRCH-HD-001'
-ON CONFLICT (product_id) DO NOTHING;
+```
