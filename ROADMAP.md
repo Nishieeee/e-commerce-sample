@@ -16,7 +16,7 @@ Here is the roadmap we will follow to build this backend like a real-world engin
 
 ## Phase 1: Foundation, Security, and Auth (The Gatekeeper)
 *Before we scale, we must secure the perimeter.*
-- [ ] **Step 1: Models & Relationships Deep Dive**
+- [x] **Step 1: Models & Relationships Deep Dive**
   - Setting up strict Eloquent models, mass-assignment protection, and defining the ERD relationships (One-to-Many, Many-to-Many).
 - [ ] **Step 2: API Authentication (Laravel Sanctum)**
   - Implementing stateful/stateless authentication.
