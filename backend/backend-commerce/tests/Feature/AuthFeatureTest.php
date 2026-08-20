@@ -67,10 +67,13 @@ class AuthFeatureTest extends TestCase
             'phone' => '1234567890'
         ]);
         $response = $this->postJson('/api/register', [
-            'email'=>$user->email,
+            'name' => 'Jane Doe',
+            'email' => $user->email,
+            'password' => 'password123',
+            'phone' => '1234567890'
         ]);
 
-        $response->assertStatus(422);     
+        $response->assertStatus(422)->assertJsonValidationErrors(['email']);     
     }
 
     public function test_login_fails_with_incorrect_password() {
