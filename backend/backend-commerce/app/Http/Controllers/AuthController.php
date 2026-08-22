@@ -9,9 +9,16 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
 
+// Resources
+use App\Http\Resources\UserResource;
+
+// Services
+use App\Services\AuthService;
+
+
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse {
+    public function register(Request $request, AuthService $authService): JsonResponse {
 
         // validate incoming requests
         $request->validate([
@@ -20,17 +27,13 @@ class AuthController extends Controller
            'password' => 'required|string|min:8',
         ]);
 
-        // Create users
-        $user = User::create($request->all());
-
-        // Generate Sanctum token
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+        $user = $authService->register($request->all());
+        
         // return Json 
         return response()->json([
         'message'=>'User created successfully',
-        'access_token'=>$token,
-        'user'=>$user // REMINDERS: implement UserProvider later
+        'access_token'=>$user['token'],
+        'user'=> new UserResource($user['user']),
         ], 201);
     } 
 
@@ -53,7 +56,7 @@ class AuthController extends Controller
        // return success response
        return response()->json([
          'access_token'=>$token,
-         'user'=>$user // REMINDERS: Implement UserProvider later
+         'user'=> new UserResource($user),
        ]);      
     }
 
