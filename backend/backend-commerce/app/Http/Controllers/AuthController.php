@@ -15,6 +15,8 @@ use App\Http\Resources\UserResource;
 // Services
 use App\Services\AuthService;
 
+// DTOs
+use App\DTOs\RegisterUserDTO;
 
 class AuthController extends Controller
 {
@@ -27,7 +29,14 @@ class AuthController extends Controller
            'password' => 'required|string|min:8',
         ]);
 
-        $user = $authService->register($request->all());
+        $dto = new RegisterUserDTO(
+            name: $request['name'],
+            email: $request['email'],
+            password: $request['password'],
+            phone: $request['phone'] ?? null,
+        );
+
+        $user = $authService->register($dto);
         
         // return Json 
         return response()->json([
