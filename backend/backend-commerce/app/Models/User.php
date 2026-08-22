@@ -28,9 +28,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
+    // middleware helper
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+    
     public function orders() {
         return $this->hasMany(Order::class);
     }
