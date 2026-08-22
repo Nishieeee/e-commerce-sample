@@ -21,9 +21,9 @@ Here is the roadmap we will follow to build this backend like a real-world engin
 - [x] **Step 2: API Authentication (Laravel Sanctum)**
   - Implementing stateful/stateless authentication.
   - Issuing and revoking Bearer tokens.
-- [ ] **Step 3: Role-Based Access Control (RBAC)**
+- [x] **Step 3: Role-Based Access Control (RBAC)**
   - Creating middleware and Gates/Policies to separate Customer actions from Admin actions.
-- [ ] **Step 4: Strict Request Validation**
+- [x] **Step 4: Strict Request Validation**
   - Moving validation out of controllers and into Form Request classes. Custom error messaging.
 
 ## Phase 2: Architectural Patterns (Scaling the Codebase)
