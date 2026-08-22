@@ -18,7 +18,7 @@ Here is the roadmap we will follow to build this backend like a real-world engin
 *Before we scale, we must secure the perimeter.*
 - [x] **Step 1: Models & Relationships Deep Dive**
   - Setting up strict Eloquent models, mass-assignment protection, and defining the ERD relationships (One-to-Many, Many-to-Many).
-- [ ] **Step 2: API Authentication (Laravel Sanctum)**
+- [x] **Step 2: API Authentication (Laravel Sanctum)**
   - Implementing stateful/stateless authentication.
   - Issuing and revoking Bearer tokens.
 - [ ] **Step 3: Role-Based Access Control (RBAC)**
@@ -28,11 +28,11 @@ Here is the roadmap we will follow to build this backend like a real-world engin
 
 ## Phase 2: Architectural Patterns (Scaling the Codebase)
 *If we put everything in controllers, the app will become a nightmare to maintain. We need structure.*
-- [ ] **Step 1: The Service Pattern**
+- [x] **Step 1: The Service Pattern**
   - Extracting business logic (like Checkout or Cart management) into dedicated Service classes. 
-- [ ] **Step 2: API Resources (Transformers)**
+- [x] **Step 2: API Resources (Transformers)**
   - Normalizing JSON responses. Never return raw database models to the client; always format them through Resource classes to hide sensitive data and control payload size.
-- [ ] **Step 3: Data Transfer Objects (DTOs)** (Bonus)
+- [x] **Step 3: Data Transfer Objects (DTOs)** (Bonus)
   - Passing structured, typed data into services instead of raw arrays or HTTP Request objects.
 
 ## Phase 3: Database Optimization & Concurrency (Scaling Data)
