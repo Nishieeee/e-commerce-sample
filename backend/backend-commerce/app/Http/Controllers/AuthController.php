@@ -18,23 +18,15 @@ use App\Services\AuthService;
 // DTOs
 use App\DTOs\RegisterUserDTO;
 
+// requests
+use App\Http\Requests\LoginUserRequest;
+use App\Http\Requests\RegisterUserRequest;
+
 class AuthController extends Controller
 {
-    public function register(Request $request, AuthService $authService): JsonResponse {
+    public function register(RegisterUserRequest $request, AuthService $authService): JsonResponse {
 
-        // validate incoming requests
-        $request->validate([
-           'name' => 'required|string|max:255',
-           'email' => 'required|string|email|unique:users',
-           'password' => 'required|string|min:8',
-        ]);
-
-        $dto = new RegisterUserDTO(
-            name: $request['name'],
-            email: $request['email'],
-            password: $request['password'],
-            phone: $request['phone'] ?? null,
-        );
+        $dto = new RegisterUserDTO(...$request->validated());
 
         $user = $authService->register($dto);
         
@@ -46,9 +38,10 @@ class AuthController extends Controller
         ], 201);
     } 
 
-    public function login(Request $request): JsonResponse {
+    public function login(LoginUserRequest $request): JsonResponse {
         // validate the credentials
-         
+        $request->validated();
+        
         // Check if the user exists and if the passowrd is correct
         $user = User::where('email', $request->email)->first();
 
