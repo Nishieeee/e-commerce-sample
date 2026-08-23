@@ -10,7 +10,7 @@ use App\Http\Controllers\CheckoutController;
 // public routes
 // AuthController
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
 
 // Product endpoints
 Route::get('/products', [ProductController::class, 'index']);  
