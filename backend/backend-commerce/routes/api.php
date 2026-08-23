@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+// Controllers
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 
 // public routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -19,6 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'Admin dashboard']);
     });
 
-    Route::get('/products', [ProductController::class, 'index']);  
 });
-
+// Product endpoints
+Route::get('/products', [ProductController::class, 'index']);  
