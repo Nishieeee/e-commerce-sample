@@ -37,7 +37,7 @@ Here is the roadmap we will follow to build this backend like a real-world engin
 
 ## Phase 3: Database Optimization & Concurrency (Scaling Data)
 *E-commerce platforms live and die by their database performance and accuracy.*
-- [ ] **Step 1: Eradicating the N+1 Problem**
+- [x] **Step 1: Eradicating the N+1 Problem**
   - Enforcing Laravel's Strict Mode. Using Eager Loading to optimize relations (e.g., loading products with their images efficiently).
 - [ ] **Step 2: Atomic Transactions & Locking**
   - Implementing Pessimistic Locking (`lockForUpdate()`) during checkout to ensure we **never** oversell inventory when two people buy the last hoodie at the exact same millisecond.

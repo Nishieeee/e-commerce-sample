@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    protected $fillable = ['user_id', 'total_amount', 'status', 'order_number', 'shipping_address','billing_address', 'subtotal'];
+    
     public function user() {
         return $this->belongsTo(User::class);
     }
@@ -20,9 +22,11 @@ class Order extends Model
 
     protected function casts(): array {
         return [
+            'order_number' => 'string',
             'shipping_address'=>'array',
             'billing_address'=>'array',
-            'total_amount'=>'decimal:2'
+            'total_amount'=>'decimal:2',
+            'subtotal'=>'decimal:2'
         ];
     }
 
