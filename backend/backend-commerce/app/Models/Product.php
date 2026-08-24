@@ -7,7 +7,10 @@ use App\Models\Category;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use App\Observers\ProductObserver;
 
+#[ObservedBy(ProductObserver::class)] 
 class Product extends Model
 {
     use HasFactory;
