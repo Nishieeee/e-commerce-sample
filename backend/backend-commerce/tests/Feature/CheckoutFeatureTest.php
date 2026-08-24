@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\InventoryItem;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\ProcessOrderPayments;
 
 class CheckoutFeatureTest extends TestCase
 {
@@ -14,6 +16,8 @@ class CheckoutFeatureTest extends TestCase
 
     public function test_user_can_checkout_successfully()
     {
+        Queue::fake();
+        
         $user = User::factory()->create();
         $token = $user->createToken('auth')->plainTextToken;
 

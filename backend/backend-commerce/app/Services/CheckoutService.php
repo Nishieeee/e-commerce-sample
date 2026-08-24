@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\DTOs\CheckoutDTO;
 
+use App\Jobs\SendOrderConfirmationEmail;
+use App\Jobs\ProcessOrderPayment;
+
 use Illuminate\Support\Str;
 
 class CheckoutService
@@ -24,7 +27,7 @@ class CheckoutService
 
            $inventory->decrement('quantity', $dto->quantity);
 
-           Order::create([
+           $order = Order::create([
                'order_number' => Str::uuid()->toString(),
                'user_id' => $dto->user_id,
                'status' => 'pending',
@@ -36,8 +39,10 @@ class CheckoutService
                    'street' => '123 Fake Street'
                ]),
                'subtotal' => 0,
-
            ]);
+           ProcessOrderPayment::withChain([
+               new SendOrderConfirmationEmail($order)
+           ])->dispatch($order);
         });
     }
 }
