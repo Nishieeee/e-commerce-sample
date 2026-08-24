@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\InventoryItem;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\ProcessOrderPayments;
+use App\Jobs\SendOrderConfirmationEmail;
 
 class CheckoutFeatureTest extends TestCase
 {
@@ -41,6 +42,9 @@ class CheckoutFeatureTest extends TestCase
         ]);
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
+        ]);
+        Queue:;assertPushedWithChain(ProcessOrderPayments::class, [
+            SendOrderConfirmationEmail::class
         ]);
     }
 
