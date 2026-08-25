@@ -25,7 +25,6 @@ class CartController extends Controller
         $dto = new CartDTO(
             user_id: $request->user()->id,
             product_id: $validated['product_id'],
-            price_at_add: $validated['price_at_add']
         );
 
         $result = $cartService->addToCart($dto);

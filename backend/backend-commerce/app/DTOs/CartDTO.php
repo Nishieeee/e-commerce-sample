@@ -6,12 +6,11 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Cart;
 
-readonly class CheckoutDTO {
+readonly class CartDTO {
 
-    public function _construct(
+    public function __construct(
         public int $user_id,
         public int $product_id,
-        public int $price_at_add
     ) {
         
     }

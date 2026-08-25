@@ -23,8 +23,7 @@ class AddToCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|exists:products.id',
-            'price_at_add' => 'required|integer',
+            'product_id' => 'required|exists:products,id',
         ];
     }
 }

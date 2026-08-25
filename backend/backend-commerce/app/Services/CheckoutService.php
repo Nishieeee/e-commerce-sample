@@ -31,7 +31,7 @@ class CheckoutService
                'order_number' => Str::uuid()->toString(),
                'user_id' => $dto->user_id,
                'status' => 'pending',
-               'total_amount' => 0, // willl be calculated later
+               'total_amount' => 0, // will be calculated later
                'shipping_address' => json_encode([
                    'street' => '123 Fake Street'
                ]),
