@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Http\JsonResponse;
+
 
 use App\Models\CartItem;
 use App\Models\Cart;
@@ -17,7 +17,7 @@ class CartService
         DB::transaction(function () use ($dto){
 
             // finds an existing cart if non exist create a new cart
-            $cart = Cart::firstOrCreate([
+            $cart = Cart::firstOrCreate(
                [ 
                    'user_id' => $dto->user_id
                ],
@@ -25,7 +25,7 @@ class CartService
                    'id' => Str::uuid()->toString(),
                    'expires_at' => now()->addDays(7)
                ]
-            ]);
+            );
 
             $product = Product::findOrFail($dto->product_id);
             
@@ -36,7 +36,7 @@ class CartService
             ],
             [
                 'quantity' => 0,
-                'price_at-add' => $price->price,
+                'price_at_add' => $price->price,
             ]);
 
             // increment if there is any

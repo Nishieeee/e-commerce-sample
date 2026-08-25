@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 // Requests
 use App\Http\Requests\AddToCartRequest;
@@ -20,7 +21,7 @@ use App\DTOs\CartDTO;
 class CartController extends Controller
 {
     public function store(AddToCartRequest $request, CartService $cartService): JsonResponse {
-        $validated = $request->validate();
+        $validated = $request->validated();
 
         $dto = new CartDTO(
             user_id: $request->user()->id,
