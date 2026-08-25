@@ -12,7 +12,7 @@ class AddToCartRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,8 @@ class AddToCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'product_id' => 'required|exists:products.id',
+            'price_at_add' => 'required|integer',
         ];
     }
 }
