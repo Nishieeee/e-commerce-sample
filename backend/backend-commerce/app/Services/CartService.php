@@ -14,7 +14,7 @@ class CartService
     public function addToCart(CartDTO $dto) {
         DB::transaction(function () use ($dto){
 
-            // finds an existing if non exist create a new cart
+            // finds an existing cart if non exist create a new cart
             $cart = Cart::firstOrCreate([
                [ 
                    'user_id' => $dto->user_id
@@ -27,7 +27,20 @@ class CartService
                ]
             ]);
 
-               
+            // find and get the cart_item or create a new one 
+            $cart_item = CartItem::firstOrNew([
+               'cart_id' => $cart->cart_id,
+               'product_id' => $dto->product_id 
+            ],
+            [
+                'quantity' => 0,
+                'price_at_add' => $dto->price_at_add
+            ]);
+
+            // increment if there is any
+            $cart_item->quantity += 1;
+            // save to db
+            $cart_item->save()        
         });
     }
 }
