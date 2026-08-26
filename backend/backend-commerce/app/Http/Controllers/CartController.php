@@ -11,7 +11,7 @@ use App\Http\Requests\UpdateCartRequest;
 
 // Models
 use App\Models\Cart;
-
+use App\Models\CartItem;
 // Services
 use App\Services\CartService;
 
@@ -59,5 +59,17 @@ class CartController extends Controller
             'cart_items' => CartResource::collection($result),
             'cart_total' => $newTotal,
         ], 200);
+    }
+
+    public function destroy(CartItem $cart_item): JsonResponse {
+
+        // verify if cart item belongs to user's cart
+        $this->authorize('delete', $cart_item);
+
+        $cart_item->delete();
+        
+        return response()->json([
+           'message' => 'Item successfully removed', 
+        ], 204);
     }
 }
