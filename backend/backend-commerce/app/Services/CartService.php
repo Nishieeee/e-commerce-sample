@@ -40,9 +40,22 @@ class CartService
             ]);
 
             // increment if there is any
-            $cart_item->quantity += 1;
+            if($dto->quantity) {
+                $cart_item->quantity += $dto->quantity;
+            } else {
+                $cart_item->quantity += 1;
+            }
+            
             // save to db
             $cart_item->save();       
+        });
+    }
+
+    public function updateCartItemQuantity() {
+        DB::transaction(function () use ($dto) {
+
+            
+            
         });
     }
 }

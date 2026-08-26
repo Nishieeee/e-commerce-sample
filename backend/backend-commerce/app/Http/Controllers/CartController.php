@@ -32,7 +32,22 @@ class CartController extends Controller
         // $newTotal = $cartservice->calculateTotal();
         return response()->json([
             'message' => 'Item Added to Cart successfully',
-        ], 200);
+        ], 200); 
+    }
+
+    public function update(UpdateCartRequest $request) {
+
+        $validated = $request->validated();
+
+        $dto = new CartDTO(
+            user_id: $request->user()->id,
+            product_id: $validated['product_id']   
+        );
+
+        // reused addToCart logic to update product quantity in cart items
+        // Will rename the service function later
+        $result = cartService->addToCart($dto);
         
+        return response()->json([], 201);
     }
 }

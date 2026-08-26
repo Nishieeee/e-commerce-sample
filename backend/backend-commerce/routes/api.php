@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // cart endpoints
     Route::post('/addtocart', [CartController::class, 'store'])
+    Route::post('/updatequantity', [CartController::class, 'update']);
     
     // Checkout endpoints
     Route::post('/checkout', [CheckoutController::class, 'store']);
