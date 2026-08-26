@@ -19,7 +19,7 @@ use App\Services\CartService;
 use App\DTOs\CartDTO;
 
 // Resource 
-use App\Resources\CartResource;
+use App\Http\Resources\CartResource;
 
 class CartController extends Controller
 {
@@ -29,10 +29,11 @@ class CartController extends Controller
         $dto = new CartDTO(
             user_id: $request->user()->id,
             product_id: $validated['product_id'],
+            quantity: $validated['quantity'] ?? null,
         );
 
         $result = $cartService->addToCart($dto);
-        $newTotal = $cartservice->calculateTotal($result);
+        $newTotal = $cartService->calculateCartTotal($result);
         
         return response()->json([
             'message' => 'Item Added to Cart successfully',
@@ -52,8 +53,8 @@ class CartController extends Controller
 
         // reused addToCart logic to update product quantity in cart items
         // Will rename the service function later
-        $result = cartService->addToCart($dto);
-        $newTotal = $cartservice->calculateTotal($result);
+        $result = $cartService->addToCart($dto);
+        $newTotal = $cartService->calculateCartTotal($result);
         
         return response()->json([
             'cart_items' => CartResource::collection($result),

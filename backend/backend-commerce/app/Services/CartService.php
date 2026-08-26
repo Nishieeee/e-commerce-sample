@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
+use Illuminate\Database\Eloquent\Collection;
 
 use App\Models\CartItem;
 use App\Models\Cart;
@@ -14,7 +14,7 @@ use App\DTOs\CartDTO;
 class CartService 
 {
     public function addToCart(CartDTO $dto) {
-        DB::transaction(function () use ($dto){
+        return DB::transaction(function () use ($dto){
 
             // finds an existing cart if non exist create a new cart
             $cart = Cart::firstOrCreate(
@@ -36,7 +36,7 @@ class CartService
             ],
             [
                 'quantity' => 0,
-                'price_at_add' => $price->price,
+                'price_at_add' => $product->price,
             ]);
 
             // increment if there is any
@@ -56,7 +56,7 @@ class CartService
         });
     }
 
-    public function calculateCartTotal(array $cart_items) {
+    public function calculateCartTotal(Collection $cart_items) {
 
         // calculate cart total
         $cart_total = $cart_items->sum(function ($item){
