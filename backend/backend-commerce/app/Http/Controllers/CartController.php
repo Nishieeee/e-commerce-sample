@@ -42,7 +42,7 @@ class CartController extends Controller
         ], 200); 
     }
 
-    public function update(UpdateCartRequest $request) {
+    public function update(UpdateCartRequest $request, CartService $cartService) {
 
         $validated = $request->validated();
 
@@ -53,7 +53,7 @@ class CartController extends Controller
 
         // reused addToCart logic to update product quantity in cart items
         // Will rename the service function later
-        $result = $cartService->addToCart($dto);
+        $result = $cartService->updateCart($dto);
         $newTotal = $cartService->calculateCartTotal($result);
         
         return response()->json([

@@ -56,6 +56,36 @@ class CartService
         });
     }
 
+    public function updateCart() {
+        return DB::transaction( function() use ($dto) {
+            
+            // finds an existing cart if non exist create a new cart
+            $cart = Cart::firstOrCreate(
+               [ 
+                   'user_id' => $dto->user_id
+               ],
+               [
+                   'id' => Str::uuid()->toString(),
+                   'expires_at' => now()->addDays(7)
+               ]
+            );
+
+            // get cart_item to updateCart
+            $cart_item = CartItem::where('cart_id', $cart->id)->where('product_id', $dto->product_id)->firstOrFail();
+
+            if($dto->quantity <= 0) {
+                $cart_item->delete();
+            } else {
+                $cart_item->quantity = $dto->quantity;
+                $cart_item->save();
+            }
+            // get all cart items
+            $cart_items = CartItem::where('cart_id', $cart->id)->get();
+            
+            return $cart_items;
+        });
+    }
+
     public function calculateCartTotal(Collection $cart_items) {
 
         // calculate cart total
