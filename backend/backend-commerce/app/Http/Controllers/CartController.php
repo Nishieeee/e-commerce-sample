@@ -18,6 +18,9 @@ use App\Services\CartService;
 // dto
 use App\DTOs\CartDTO;
 
+// Resource 
+use App\Resources\CartResource;
+
 class CartController extends Controller
 {
     public function store(AddToCartRequest $request, CartService $cartService): JsonResponse {
@@ -29,9 +32,12 @@ class CartController extends Controller
         );
 
         $result = $cartService->addToCart($dto);
-        // $newTotal = $cartservice->calculateTotal();
+        $newTotal = $cartservice->calculateTotal($result);
+        
         return response()->json([
             'message' => 'Item Added to Cart successfully',
+            'cart_items' => CartResource::collection($result), 
+            'cart_total' =>  $newTotal,
         ], 200); 
     }
 
@@ -47,7 +53,11 @@ class CartController extends Controller
         // reused addToCart logic to update product quantity in cart items
         // Will rename the service function later
         $result = cartService->addToCart($dto);
+        $newTotal = $cartservice->calculateTotal($result);
         
-        return response()->json([], 201);
+        return response()->json([
+            'cart_items' => CartResource::collection($result),
+            'cart_total' => $newTotal,
+        ], 200);
     }
 }

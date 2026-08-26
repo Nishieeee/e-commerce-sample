@@ -47,15 +47,22 @@ class CartService
             }
             
             // save to db
-            $cart_item->save();       
+            $cart_item->save();  
+
+            // get all cart items
+            $cart_items = CartItem::where('cart_id', $cart->id)->get();
+            
+            return $cart_items;
         });
     }
 
-    public function updateCartItemQuantity() {
-        DB::transaction(function () use ($dto) {
+    public function calculateCartTotal(array $cart_items) {
 
-            
-            
+        // calculate cart total
+        $cart_total = $cart_items->sum(function ($item){
+            return $item->quantity * $item->price;
         });
+
+        return $cart_total;
     }
 }
