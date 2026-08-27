@@ -56,7 +56,7 @@ class CartService
         });
     }
 
-    public function updateCart() {
+    public function updateCart(CartDTO $dto) {
         return DB::transaction( function() use ($dto) {
             
             // finds an existing cart if non exist create a new cart
