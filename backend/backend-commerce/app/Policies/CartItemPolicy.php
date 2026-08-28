@@ -11,6 +11,6 @@ class CartItemPolicy
      */
      
     public function delete(User $user, CartItem $cart_item): bool {
-        return $cart_item->cart->user_id === $user_id;
+        return $cart_item->cart->user_id === $user->id;
     }
 }

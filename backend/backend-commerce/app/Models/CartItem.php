@@ -17,4 +17,8 @@ class CartItem extends Model
         'quantity',
         'price_at_add',
     ];
+
+    public function cart() {
+        return $this->belongsTo(Cart::class);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 // Requests
 use App\Http\Requests\AddToCartRequest;
@@ -48,7 +49,8 @@ class CartController extends Controller
 
         $dto = new CartDTO(
             user_id: $request->user()->id,
-            product_id: $validated['product_id']   
+            product_id: $validated['product_id'],
+            quantity: $validated['quantity'] 
         );
 
         // reused addToCart logic to update product quantity in cart items
@@ -65,7 +67,7 @@ class CartController extends Controller
     public function destroy(CartItem $cart_item): JsonResponse {
 
         // verify if cart item belongs to user's cart
-        $this->authorize('delete', $cart_item);
+        Gate::authorize('delete', $cart_item);
 
         $cart_item->delete();
         
