@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\CartItem;
 use App\Models\Cart;
@@ -13,6 +14,27 @@ use App\DTOs\CartDTO;
 
 class CartService 
 {
+    public function fetchCartItemsFromCart(int $user_id) {
+        return DB::transaction(function () use ($user_id) {
+        
+            // this will create a new cart for the user they'll visit cartpage
+            $cart = Cart::firstOrCreate(
+            [ 
+                'user_id' => $user_id
+            ],
+            [
+                'id' => Str::uuid()->toString(),
+                'expires_at' => now()->addDays(7)
+            ]
+            );
+            
+            $cart_items = Cache::remember("cache_cart_{$user_id}", now()->addDays(7), function () use ($cart){
+            return CartItem::where('cart_id', $cart->id)->get(); 
+            });
+            
+            return $cart_items;
+        });
+    }
     public function addToCart(CartDTO $dto) {
         return DB::transaction(function () use ($dto){
 
@@ -95,4 +117,6 @@ class CartService
 
         return $cart_total;
     }
+
+    
 }

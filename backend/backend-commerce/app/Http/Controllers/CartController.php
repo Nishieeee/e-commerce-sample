@@ -24,6 +24,18 @@ use App\Http\Resources\CartResource;
 
 class CartController extends Controller
 {
+    public function index(CartService $cartService, Request $request): JsonResponse {
+        $user_id = $request->user()->id;
+
+        $cart_items = $cartService->fetchCartItemsFromCart($user_id);
+        $total = $cartService->calculateCartTotal($cart_items);
+
+        return response()->json([
+            'cart_items' => CartResource::collection($cart_items),
+            'total' => $total,
+        ], 201);
+    }
+    
     public function store(AddToCartRequest $request, CartService $cartService): JsonResponse {
         $validated = $request->validated();
 
