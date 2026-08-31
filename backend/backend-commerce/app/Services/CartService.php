@@ -14,6 +14,10 @@ use App\DTOs\CartDTO;
 
 class CartService 
 {
+    public function __construct(
+        protected InventoryService $inventoryservice
+    ) {}
+    
     public function fetchCartItemsFromCart(int $user_id) {
         return DB::transaction(function () use ($user_id) {
         
@@ -60,13 +64,15 @@ class CartService
                 'quantity' => 0,
                 'price_at_add' => $product->price,
             ]);
-
+            
             // increment if there is any
             if($dto->quantity) {
                 $cart_item->quantity += $dto->quantity;
             } else {
                 $cart_item->quantity += 1;
             }
+
+            $this->inventoryservice->incrementReservedQuantity($dto->product_id, $dto->quantity);
             
             // save to db
             $cart_item->save();  
@@ -95,12 +101,22 @@ class CartService
             // get cart_item to updateCart
             $cart_item = CartItem::where('cart_id', $cart->id)->where('product_id', $dto->product_id)->firstOrFail();
 
+            // calculate reserved stock difference
+            $difference = $dto->quantity - $cart_item->quantity;
+            
+            if ($difference > 0) {
+                $this->inventoryservice->incrementReservedQuantity($dto->product_id, $difference);
+            } elseif ($difference < 0) {
+                $this->inventoryservice->releaseReservedQuantity($dto->product_id, abs($difference));
+            }
+
             if($dto->quantity <= 0) {
                 $cart_item->delete();
             } else {
                 $cart_item->quantity = $dto->quantity;
                 $cart_item->save();
             }
+            
             // get all cart items
             $cart_items = CartItem::where('cart_id', $cart->id)->get();
             
@@ -109,7 +125,7 @@ class CartService
     }
 
     public function calculateCartTotal(Collection $cart_items) {
-
+        
         // calculate cart total
         $cart_total = $cart_items->sum(function ($item){
             return $item->quantity * $item->price;

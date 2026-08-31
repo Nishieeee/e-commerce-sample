@@ -19,6 +19,7 @@ class CartFeatureTest extends TestCase
     public function test_add_to_cart() {
         $user = User::factory()->create();
         $product = Product::factory()->create();
+        \App\Models\InventoryItem::create(['product_id' => $product->id, 'quantity' => 10]);
 
         
         $response = $this
@@ -39,6 +40,7 @@ class CartFeatureTest extends TestCase
     public function test_update_cart() {
         $user = User::factory()->create();
         $product = Product::factory()->create(['price' => 10.00]);
+        \App\Models\InventoryItem::create(['product_id' => $product->id, 'quantity' => 10, 'reserved_quantity' => 1]);
 
         $cart = Cart::create(['user_id' => $user->id, 'expires_at' => now()->addDays(7)]);
         $cartItem = CartItem::create([
@@ -66,6 +68,7 @@ class CartFeatureTest extends TestCase
     public function test_update_cart_deletes_when_quantity_is_zero() {
         $user = User::factory()->create();
         $product = Product::factory()->create(['price' => 10.00]);
+        \App\Models\InventoryItem::create(['product_id' => $product->id, 'quantity' => 10, 'reserved_quantity' => 2]);
 
         $cart = Cart::create(['user_id' => $user->id, 'expires_at' => now()->addDays(7)]);
         $cartItem = CartItem::create([
@@ -92,6 +95,7 @@ class CartFeatureTest extends TestCase
     public function test_delete_cart_item() {
         $user = User::factory()->create();
         $product = Product::factory()->create(['price' => 10.00]);
+        \App\Models\InventoryItem::create(['product_id' => $product->id, 'quantity' => 10, 'reserved_quantity' => 2]);
 
         $cart = Cart::create(['user_id' => $user->id, 'expires_at' => now()->addDays(7)]);
         $cartItem = CartItem::create([

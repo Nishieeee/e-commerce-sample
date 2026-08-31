@@ -31,8 +31,8 @@ class CheckoutFeatureTest extends TestCase
         $product1 = Product::factory()->create(['price' => 10.00]);
         $product2 = Product::factory()->create(['price' => 20.00]);
 
-        InventoryItem::create(['product_id' => $product1->id, 'quantity' => 10]);
-        InventoryItem::create(['product_id' => $product2->id, 'quantity' => 5]);
+        InventoryItem::create(['product_id' => $product1->id, 'quantity' => 8, 'reserved_quantity' => 2]);
+        InventoryItem::create(['product_id' => $product2->id, 'quantity' => 4, 'reserved_quantity' => 1]);
 
         \App\Models\CartItem::create(['cart_id' => $cart->id, 'product_id' => $product1->id, 'quantity' => 2, 'price_at_add' => 10.00]);
         \App\Models\CartItem::create(['cart_id' => $cart->id, 'product_id' => $product2->id, 'quantity' => 1, 'price_at_add' => 20.00]);
@@ -43,9 +43,9 @@ class CheckoutFeatureTest extends TestCase
 
         $response->assertStatus(201);
         
-        // Assert inventory deducted
-        $this->assertDatabaseHas('inventory_items', ['product_id' => $product1->id, 'quantity' => 8]);
-        $this->assertDatabaseHas('inventory_items', ['product_id' => $product2->id, 'quantity' => 4]);
+        // Assert inventory reserved quantity deducted (quantity stays the same since it was already deducted when added to cart)
+        $this->assertDatabaseHas('inventory_items', ['product_id' => $product1->id, 'quantity' => 8, 'reserved_quantity' => 0]);
+        $this->assertDatabaseHas('inventory_items', ['product_id' => $product2->id, 'quantity' => 4, 'reserved_quantity' => 0]);
         
         // Assert order created with correct total (10*2 + 20*1 = 40)
         $this->assertDatabaseHas('orders', [
@@ -76,9 +76,10 @@ class CheckoutFeatureTest extends TestCase
         InventoryItem::create([
             'product_id' => $product->id,
             'quantity' => 1,
+            'reserved_quantity' => 1 // Only 1 is actually reserved
         ]);
 
-        // Trying to buy 5, only 1 in stock
+        // Trying to buy 5, but we only reserved 1! (Malicious user bypassing Cart API)
         \App\Models\CartItem::create(['cart_id' => $cart->id, 'product_id' => $product->id, 'quantity' => 5, 'price_at_add' => 10.00]);
 
         $response = $this->withHeaders([
@@ -89,6 +90,7 @@ class CheckoutFeatureTest extends TestCase
         $this->assertDatabaseHas('inventory_items', [
             'product_id' => $product->id,
             'quantity' => 1, // Stock should not change
+            'reserved_quantity' => 1
         ]);
         
         // Cart item shouldn't be deleted because transaction rolled back

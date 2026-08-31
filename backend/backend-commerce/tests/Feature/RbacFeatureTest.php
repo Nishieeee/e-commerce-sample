@@ -17,7 +17,7 @@ class RbacFeatureTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/');
+        ])->getJson('/api/admin');
 
         $response->assertStatus(403);
     }
@@ -29,7 +29,7 @@ class RbacFeatureTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->getJson('/api/');
+        ])->getJson('/api/admin');
 
         $response->assertStatus(200)
                  ->assertJson(['message' => 'Admin dashboard']);

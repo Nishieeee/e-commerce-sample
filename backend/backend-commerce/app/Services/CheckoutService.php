@@ -74,14 +74,4 @@ class CheckoutService
 
         return $cart_total;
     }
-
-    function deductStock(int $product_id, int $quantity) {
-        $inventory = InventoryItem::where('product_id', $product_id)->lockForUpdate()->first();
-    
-        if(!$inventory || $inventory->quantity < $quantity) {
-            abort(400, 'Insufficient stock');
-        }
-        
-        $inventory->decrement('quantity', $quantity);
-    }
 }

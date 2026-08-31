@@ -15,7 +15,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 // Services
 use App\Services\CartService;
-
+use App\Services\InventoryService;
 // dto
 use App\DTOs\CartDTO;
 
@@ -24,6 +24,10 @@ use App\Http\Resources\CartResource;
 
 class CartController extends Controller
 {
+    public function __construct(
+        protected InventoryService $inventoryservice
+    ) {}
+    
     public function index(CartService $cartService, Request $request): JsonResponse {
         $user_id = $request->user()->id;
 
@@ -42,7 +46,7 @@ class CartController extends Controller
         $dto = new CartDTO(
             user_id: $request->user()->id,
             product_id: $validated['product_id'],
-            quantity: $validated['quantity'] ?? null,
+            quantity: $validated['quantity'] ?? 1,
         );
 
         $result = $cartService->addToCart($dto);
@@ -80,7 +84,10 @@ class CartController extends Controller
 
         // verify if cart item belongs to user's cart
         Gate::authorize('delete', $cart_item);
-
+        
+        // release reserved quantity
+        $this->inventoryservice->releaseReservedQuantity($cart_item->product_id, $cart_item->quantity);
+        
         $cart_item->delete();
         
         return response()->json([
