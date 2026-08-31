@@ -12,11 +12,17 @@ class CheckoutController extends Controller
 {
     public function store(CheckoutRequest $request, CheckoutService $checkoutService): JsonResponse
     {
-        $validated = $request->validated();
+        // 1. Get the user's cart from the database! Never trust the frontend!
+        $cart = \App\Models\Cart::where('user_id', $request->user()->id)->firstOrFail();
+        $cartItems = \App\Models\CartItem::where('cart_id', $cart->id)->get()->toArray();
+
+        if (empty($cartItems)) {
+            return response()->json(['message' => 'Cart is empty'], 400);
+        }
+        
         $dto = new CheckoutDTO(
             user_id: $request->user()->id,
-            product_id: $validated['product_id'],
-            quantity: $validated['quantity']
+            cart_items: $cartItems
         );
 
         $result = $checkoutService->processOrder($dto);
