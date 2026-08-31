@@ -16,6 +16,10 @@ use Illuminate\Support\Str;
 
 class CheckoutService
 {
+    public function __construct(
+        protected InventoryService $inventoryservice
+    ) {}
+
     public function processOrder(CheckoutDTO $dto)
     {
         DB::transaction(function () use ($dto) {
@@ -24,7 +28,7 @@ class CheckoutService
             $itemsCheckout = collect($dto->cart_items);
             
             foreach($itemsCheckout as $item) {
-                 $this->deductStock($item['product_id'], $item['quantity']);
+                 $this->inventoryservice->deductStock($item['product_id'], $item['quantity']);
             }
 
             // calculate total amount
