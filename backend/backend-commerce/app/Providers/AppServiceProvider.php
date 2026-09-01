@@ -2,14 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-
-// Rate limiting
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
+// Rate limiting
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,18 +25,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Model::preventLazyLoading(!app()->isProduction());
+        Model::preventLazyLoading(! app()->isProduction());
 
-        Model::preventSilentlyDiscardingAttributes(!app()->isProduction());
+        Model::preventSilentlyDiscardingAttributes(! app()->isProduction());
 
         RateLimiter::for('api', function (Request $request) {
+            /** @var User|null $user */
+            $user = $request->user();
+
             // remove rate limiting for admin users
-            if($request->user()?->isAdmin()) {
+            if ($user?->isAdmin()) {
                 return Limit::none();
             }
+
             // limit to 60 requests per minute
-            return Limit::perMinute(60)->by($request->user()?->id ?:
-            $request->ip());
+            return Limit::perMinute(60)->by($user?->id ?: $request->ip());
         });
 
         RateLimiter::for('login', function (Request $request) {

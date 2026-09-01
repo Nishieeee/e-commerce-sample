@@ -21,12 +21,10 @@ class AuthController extends Controller
 {
     public function register(RegisterUserRequest $request, AuthService $authService): JsonResponse
     {
-
-        $dto = new RegisterUserDTO(...$request->validated());
+        $dto = RegisterUserDTO::fromArray($request->validated());
 
         $user = $authService->register($dto);
 
-        // return Json
         return response()->json([
             'message' => 'User created successfully',
             'access_token' => $user['token'],
@@ -36,32 +34,29 @@ class AuthController extends Controller
 
     public function login(LoginUserRequest $request): JsonResponse
     {
-        // validate the credentials
-        $request->validated();
+        $validated = $request->validated();
 
-        // Check if the user exists and if the passowrd is correct
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $validated['email'])->first();
 
-        // return 401 for invalid email or password
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);
         }
 
-        // generate token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // return success response
         return response()->json([
             'access_token' => $token,
             'user' => new UserResource($user),
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        /** @var User|null $user */
+        $user = $request->user();
+        $user?->currentAccessToken()?->delete();
 
         return response()->json([
             'message' => 'Logged out successfully',
