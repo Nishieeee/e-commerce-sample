@@ -2,33 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
-
-// Requests
+use App\DTOs\CartDTO;
 use App\Http\Requests\AddToCartRequest;
 use App\Http\Requests\UpdateCartRequest;
-
-// Models
-use App\Models\Cart;
-use App\Models\CartItem;
-// Services
-use App\Services\CartService;
-use App\Services\InventoryService;
-// dto
-use App\DTOs\CartDTO;
-
-// Resource 
+// Requests
 use App\Http\Resources\CartResource;
+use App\Models\Cart;
+// Models
+use App\Models\CartItem;
+use App\Services\CartService;
+// Services
+use App\Services\InventoryService;
+use Illuminate\Http\JsonResponse;
+// dto
+use Illuminate\Http\Request;
+// Resource
+use Illuminate\Support\Facades\Gate;
 
 class CartController extends Controller
 {
     public function __construct(
         protected InventoryService $inventoryservice
     ) {}
-    
-    public function index(CartService $cartService, Request $request): JsonResponse {
+
+    public function index(CartService $cartService, Request $request): JsonResponse
+    {
         $user_id = $request->user()->id;
 
         $cart_items = $cartService->fetchCartItemsFromCart($user_id);
@@ -39,8 +37,9 @@ class CartController extends Controller
             'total' => $total,
         ], 201);
     }
-    
-    public function store(AddToCartRequest $request, CartService $cartService): JsonResponse {
+
+    public function store(AddToCartRequest $request, CartService $cartService): JsonResponse
+    {
         $validated = $request->validated();
 
         $dto = new CartDTO(
@@ -51,47 +50,49 @@ class CartController extends Controller
 
         $result = $cartService->addToCart($dto);
         $newTotal = $cartService->calculateCartTotal($result);
-        
+
         return response()->json([
             'message' => 'Item Added to Cart successfully',
-            'cart_items' => CartResource::collection($result), 
-            'cart_total' =>  $newTotal,
-        ], 200); 
+            'cart_items' => CartResource::collection($result),
+            'cart_total' => $newTotal,
+        ], 200);
     }
 
-    public function update(UpdateCartRequest $request, CartService $cartService) {
+    public function update(UpdateCartRequest $request, CartService $cartService)
+    {
 
         $validated = $request->validated();
 
         $dto = new CartDTO(
             user_id: $request->user()->id,
             product_id: $validated['product_id'],
-            quantity: $validated['quantity'] 
+            quantity: $validated['quantity']
         );
 
         // reused addToCart logic to update product quantity in cart items
         // Will rename the service function later
         $result = $cartService->updateCart($dto);
         $newTotal = $cartService->calculateCartTotal($result);
-        
+
         return response()->json([
             'cart_items' => CartResource::collection($result),
             'cart_total' => $newTotal,
         ], 200);
     }
 
-    public function destroy(CartItem $cart_item): JsonResponse {
+    public function destroy(CartItem $cart_item): JsonResponse
+    {
 
         // verify if cart item belongs to user's cart
         Gate::authorize('delete', $cart_item);
-        
+
         // release reserved quantity
         $this->inventoryservice->releaseReservedQuantity($cart_item->product_id, $cart_item->quantity);
-        
+
         $cart_item->delete();
-        
+
         return response()->json([
-           'message' => 'Item successfully removed', 
+            'message' => 'Item successfully removed',
         ], 204);
     }
 }

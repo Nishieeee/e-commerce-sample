@@ -8,6 +8,6 @@ readonly class RegisterUserDTO
         public string $name,
         public string $email,
         public string $password,
-        public ?string $phone = null    
+        public ?string $phone = null
     ) {}
 }

@@ -2,12 +2,11 @@
 
 namespace App\Jobs;
 
+use App\Mail\OrderConfirmationMail;
+use App\Models\Order;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\OrderConfirmationMail;
-use App\Models\Order;
-
 
 class SendOrderConfirmationEmail implements ShouldQueue
 {
@@ -16,10 +15,7 @@ class SendOrderConfirmationEmail implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Order $order)
-    {
-        
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * Execute the job.

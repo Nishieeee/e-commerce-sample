@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class RbacFeatureTest extends TestCase
 {
@@ -16,7 +16,7 @@ class RbacFeatureTest extends TestCase
         $token = $customer->createToken('auth')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/admin');
 
         $response->assertStatus(403);
@@ -28,10 +28,10 @@ class RbacFeatureTest extends TestCase
         $token = $admin->createToken('auth')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/admin');
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Admin dashboard']);
+            ->assertJson(['message' => 'Admin dashboard']);
     }
 }

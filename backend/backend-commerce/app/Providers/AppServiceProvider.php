@@ -31,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         Model::preventSilentlyDiscardingAttributes(!app()->isProduction());
 
         RateLimiter::for('api', function (Request $request) {
+            // remove rate limiting for admin users
+            if($request->user()?->isAdmin()) {
+                return Limit::none();
+            }
             // limit to 60 requests per minute
             return Limit::perMinute(60)->by($request->user()?->id ?:
             $request->ip());

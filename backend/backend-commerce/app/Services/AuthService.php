@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace App\Services;
 
-use App\Models\User;
 use App\DTOs\RegisterUserDTO;
+use App\Models\User;
 
 class AuthService
 {
@@ -16,14 +16,14 @@ class AuthService
             'password' => $dto->password,
             'phone' => $dto->phone,
         ]);
-    
+
         // Generate Sanctum token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // return user and token
         return [
-            'user'=>$user,
-            'token'=>$token,
+            'user' => $user,
+            'token' => $token,
         ];
     }
 }

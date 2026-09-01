@@ -1,8 +1,8 @@
 <?php
 
+use App\Jobs\ReleaseAbandonedCarts;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use App\Jobs\ReleaseAbandonedCarts;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {

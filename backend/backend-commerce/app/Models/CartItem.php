@@ -2,19 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use App\Observers\CartObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Model;
 
 #[ObservedBy(CartObserver::class)]
 class CartItem extends Model
 {
-    
     protected $fillable = [
         'id',
         'cart_id',
@@ -23,7 +17,8 @@ class CartItem extends Model
         'price_at_add',
     ];
 
-    public function cart() {
+    public function cart()
+    {
         return $this->belongsTo(Cart::class);
     }
 }

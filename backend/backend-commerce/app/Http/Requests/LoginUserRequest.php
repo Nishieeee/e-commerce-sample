@@ -38,7 +38,7 @@ class LoginUserRequest extends FormRequest
             'password.required' => 'Password is required',
             'email.email' => 'Invalid email format',
             'password.min' => 'Password must be at least 8 characters',
-            
+
         ];
     }
 }

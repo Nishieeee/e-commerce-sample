@@ -16,12 +16,12 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // check if user is authenticated
-        if(!$request->user()) {
+        if (! $request->user()) {
             abort(401, 'Unauthorized');
         }
 
-        // check if user is Admin 
-        if(!$request->user()->isAdmin()) {
+        // check if user is Admin
+        if (! $request->user()->isAdmin()) {
             abort(403, 'Forbidden');
         }
 
