@@ -8,10 +8,10 @@ This document outlines the next level of features required to turn this applicat
 Currently, the checkout only processes a single `product_id`. Real e-commerce platforms require a cart.
 
 **Requirements:**
-- [ ] Create a `CartController` for adding, updating, and removing items.
-- [ ] Store cart session data. (Option A: In Redis for speed. Option B: In a `cart_items` database table).
-- [ ] Update `CheckoutService` to accept an array of items, iterate over them, and lock multiple rows in the `inventory_items` table.
-- [ ] Dynamically calculate the `subtotal` based on the product prices.
+- [x] Create a `CartController` for adding, updating, and removing items.
+- [x] Store cart session data. (Option A: In Redis for speed. Option B: In a `cart_items` database table).
+- [x] Update `CheckoutService` to accept an array of items, iterate over them, and lock multiple rows in the `inventory_items` table.
+- [x] Dynamically calculate the `subtotal` based on the product prices.
 
 ---
 
@@ -19,10 +19,10 @@ Currently, the checkout only processes a single `product_id`. Real e-commerce pl
 If 10 people have the last PS5 in their cart, 9 will get an error at the exact moment of checkout. We want to reserve stock when they *add* it to their cart.
 
 **Requirements:**
-- [ ] Add a `reserved_quantity` column to the `inventory_items` table.
-- [ ] When an item is added to the cart, increment `reserved_quantity` and decrement available `quantity`.
-- [ ] Create a scheduled Laravel Job (e.g., running every 5 minutes) that checks for abandoned carts older than 15 minutes.
-- [ ] If a cart is abandoned, the job should release the `reserved_quantity` back to the available pool.
+- [x] Add a `reserved_quantity` column to the `inventory_items` table.
+- [x] When an item is added to the cart, increment `reserved_quantity` and decrement available `quantity`.
+- [x] Create a scheduled Laravel Job (e.g., running every 5 minutes) that checks for abandoned carts older than 15 minutes.
+- [x] If a cart is abandoned, the job should release the `reserved_quantity` back to the available pool.
 
 ---
 

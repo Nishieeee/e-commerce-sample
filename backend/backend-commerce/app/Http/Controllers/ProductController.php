@@ -17,4 +17,23 @@ class ProductController extends Controller
 
         return ProductResource::collection($products);
     }
+
+    public function store(AddNewProductRequest $request): JsonResponse {
+
+        // validate request
+        $request->validated();
+
+        // pass to dto
+
+        // run services
+        // create product then store to Cache
+
+        
+        // run bg jobs
+        
+        // return JsonResponse
+        return response()->json([
+           'message'=>'Product added successfully', 
+        ], 201);
+    }
 }
