@@ -1,0 +1,5 @@
+#!/usr/bin/env php
+<?php
+
+chdir(__DIR__ . '/backend/backend-commerce');
+require __DIR__ . '/backend/backend-commerce/artisan';

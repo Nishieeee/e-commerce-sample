@@ -21,7 +21,7 @@ class PaymentReceived
     public function __construct(
         public string $orderNumber,
         public string $transactionId,
-        public string float $amount,
+        public float $amount,
         public string $currency,
         public array $payload = []
     ) {}
