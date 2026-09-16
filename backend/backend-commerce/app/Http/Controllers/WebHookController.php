@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Events\PaymentReceived;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class WebHookController extends Controller
 {
@@ -17,46 +17,46 @@ class WebHookController extends Controller
         $webhookSecret = (string) config('services.stripe.webhook_secret');
 
         // validate inputs if empty
-        if (!$signatureHeader || empty($webhookSecret)) {
+        if (! $signatureHeader || empty($webhookSecret)) {
             return response()->json([
-                'error' => 'Missing signature or webhook secret configuration'
+                'error' => 'Missing signature or webhook secret configuration',
             ], 400);
         }
         // parse timestamp t and signature v1 from stripe-signature header
-        $signatureHeader = $this->parseSignatureHeader($signatureHeader);
-        
-        // check if t and v1 are set(?) 
-        if(!isset($signatureData['t'], $signatureData['v1'])) {
+        $signatureData = $this->parseSignatureHeader($signatureHeader);
+
+        // check if t and v1 are set(?)
+        if (! isset($signatureData['t'], $signatureData['v1'])) {
             return response()->json([
-                'error' => 'Signature verification failed'
+                'error' => 'Signature verification failed',
             ], 400);
         }
 
         // Tolerance check
         // reject requests that are older than 5 mins
-        if(abs(time() - (int) $signatureData['t']) > 300) { // converts timestamp to int then compare
+        if (abs(time() - (int) $signatureData['t']) > 300) { // converts timestamp to int then compare
             return response()->json([
-                'error' => 'Webhook Timestamp expired'
+                'error' => 'Webhook Timestamp expired',
             ], 400);
         }
 
         // compute expected HMAC-SHA256 signature
         // construct signed payload, concatenating t and rawPayload
-        $signedPayload = $signatureData['t'] . '.' . $rawPayload;
-        
+        $signedPayload = $signatureData['t'].'.'.$rawPayload;
+
         // generate actual security signature
         $expectedsignature = hash_hmac('sha256', $signedPayload, $webhookSecret);
-        
+
         // Constant-time string comaprison to prevent timing attacks
-        if(!hash_equals($expectedsignature, $signatureData['v1'])) {
+        if (! hash_equals($expectedsignature, $signatureData['v1'])) {
             return response()->json([
-                'error' => 'Signature verification failed'
+                'error' => 'Signature verification failed',
             ], 400);
         }
 
-        // decode the payload 
+        // decode the payload
         $event = json_decode($rawPayload, true);
-        if(($event['type'] ?? '') === 'payment_intent.succeeded') {
+        if (($event['type'] ?? '') === 'payment_intent.succeeded') {
             // extract payment
             $paymentIntent = $event['data']['object'];
 
@@ -71,7 +71,7 @@ class WebHookController extends Controller
             $currency = strtoupper((string) ($paymentIntent['currency'] ?? 'USD'));
 
             // process the event
-            if($orderNumber && $transactionId) {
+            if ($orderNumber && $transactionId) {
                 PaymentReceived::dispatch(
                     $orderNumber,
                     $transactionId,
@@ -84,17 +84,19 @@ class WebHookController extends Controller
 
         return response()->json(['status' => 'success'], 200);
     }
-    /* 
+
+    /*
         parse the stripe-signature header into an associative array
     */
-    protected function parseSignatureHeader(string $header): array {
+    protected function parseSignatureHeader(string $header): array
+    {
         $items = explode(',', $header);
         $result = [];
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $parts = explode('=', trim($item), 2);
 
-        if(count($parts) === 2) {
+            if (count($parts) === 2) {
                 $result[$parts[0]] = $parts[1];
             }
         }
@@ -102,4 +104,3 @@ class WebHookController extends Controller
         return $result;
     }
 }
-
