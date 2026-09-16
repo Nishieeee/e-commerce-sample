@@ -23,12 +23,12 @@ class WebHookController extends Controller
             ], 400);
         }
         // parse timestamp t and signature v1 from stripe-signature header
-        $signatureHeader = $this->parseSignattureHeader($signatureHeader);
+        $signatureHeader = $this->parseSignatureHeader($signatureHeader);
         
         // check if t and v1 are set(?) 
         if(!isset($signatureData['t'], $signatureData['v1'])) {
             return response()->json([
-                'error' => 'Invalid signature header format'
+                'error' => 'Signature verification failed'
             ], 400);
         }
 
@@ -92,7 +92,7 @@ class WebHookController extends Controller
         $result = [];
 
         foreach($items as $item) {
-            $parts - explode('=', trim($item), 2);
+            $parts = explode('=', trim($item), 2);
 
         if(count($parts) === 2) {
                 $result[$parts[0]] = $parts[1];
