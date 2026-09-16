@@ -1,10 +1,12 @@
 <?php
 
+// Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
-// Controllers
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WebHookController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,9 @@ Route::middleware('throttle:login')->post('/login', [AuthController::class, 'log
 
 // Product endpoints
 Route::get('/products', [ProductController::class, 'index']);
+
+// webhook listener
+Route::post('/webhook/stripe', [WebhookController::class, 'handleStripeWebhook']);
 
 // protected routes
 Route::middleware('auth:sanctum')->group(function () {

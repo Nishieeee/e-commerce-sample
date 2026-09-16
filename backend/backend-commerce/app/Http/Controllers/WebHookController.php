@@ -84,5 +84,22 @@ class WebHookController extends Controller
 
         return response()->json(['status' => 'success'], 200);
     }
+    /* 
+        parse the stripe-signature header into an associative array
+    */
+    protected function parseSignatureHeader(string $header): array {
+        $items = explode(',', $header);
+        $result = [];
+
+        foreach($items as $item) {
+            $parts - explode('=', trim($item), 2);
+
+        if(count($parts) === 2) {
+                $result[$parts[0]] = $parts[1];
+            }
+        }
+
+        return $result;
+    }
 }
 
