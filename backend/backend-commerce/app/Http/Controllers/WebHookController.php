@@ -61,11 +61,11 @@ class WebHookController extends Controller
             $paymentIntent = $event['data']['object'];
 
             // extract order_number
-            $orderNumber = $paymentIntent['metadata'] ?? null;
+            $orderNumber = $paymentIntent['metadata']['order_number'] ?? null;
             // extract transac id
             $transactionId = $paymentIntent['id'] ?? null;
             // extract amount from payload
-            $amount = isset($paymentIntent['id']) ? ((float) $paymentIntent['amount']) / 100 : 0.0; // grabs the integer converts it from cents
+            $amount = isset($paymentIntent['amount']) ? ((float) $paymentIntent['amount']) / 100 : 0.0; // grabs the integer converts it from cents
 
             // converts usd currency to uppercase
             $currency = strtoupper((string) ($paymentIntent['currency'] ?? 'USD'));
