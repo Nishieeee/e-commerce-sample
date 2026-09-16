@@ -19,7 +19,7 @@ Route::middleware('throttle:login')->post('/login', [AuthController::class, 'log
 Route::get('/products', [ProductController::class, 'index']);
 
 // webhook listener
-Route::post('/webhook/stripe', [WebhookController::class, 'handleStripeWebhook']);
+Route::post('/webhooks/stripe', [WebhookController::class, 'handleStripeWebhook']);
 
 // protected routes
 Route::middleware('auth:sanctum')->group(function () {
